@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@source "../../src/views/**/*.ejs";
+@source "../../public/**/*.js";
+
+@theme {
+  --font-sans: "Outfit", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-950: #082f49;
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(14, 165, 233, 0.4); }
+  }
+
+  --animate-fade-in: fade-in 0.8s ease-out forwards;
+  --animate-slide-down: slide-down 0.4s ease-out forwards;
+  --animate-glow: glow 3s ease-in-out infinite;
+}
+
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-300 shadow-lg shadow-primary-900/20 active:scale-95;
+  }
+  
+  .glass-card {
+    @apply bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-xl p-6 shadow-xl;
+  }
+}

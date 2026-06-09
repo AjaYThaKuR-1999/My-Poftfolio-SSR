@@ -1,0 +1,19 @@
+<section class="min-h-screen flex items-center justify-center pt-20">
+    <div class="text-center px-4">
+        <div class="text-primary-500 text-6xl mb-8">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6"><%= title %></h1>
+        <p class="text-slate-400 text-lg mb-10 max-w-md mx-auto">
+            <%= message %>
+        </p>
+        <% if (error && error.stack) { %>
+            <div class="max-w-4xl mx-auto mb-10 text-left overflow-hidden rounded-lg">
+                <pre class="bg-slate-900 p-6 text-xs text-slate-500 overflow-x-auto border border-slate-800">
+                    <code><%= error.stack %></code>
+                </pre>
+            </div>
+        <% } %>
+        <a href="/" class="btn-primary inline-block">Return to Homepage</a>
+    </div>
+</section>

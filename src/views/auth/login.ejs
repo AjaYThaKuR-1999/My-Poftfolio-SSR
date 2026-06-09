@@ -1,0 +1,67 @@
+<section class="min-h-[80vh] flex flex-col items-center justify-center py-12">
+    <div class="max-w-md w-full px-4">
+        <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
+            <!-- Latest Updates Toast -->
+            <div class="glass-card mb-6 border-l-4 border-l-primary-500 p-4 relative overflow-hidden backdrop-blur-md bg-slate-900/60 border border-slate-800/80 rounded-xl shadow-2xl">
+                <div class="flex items-start gap-3.5">
+                    <div class="shrink-0 relative mt-0.5">
+                        <span class="absolute inline-flex h-2 w-2 rounded-full bg-primary-400 opacity-75 animate-ping right-0 top-0"></span>
+                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400">
+                            <i class="fas fa-bullhorn text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Latest Updates</h4>
+                        <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1">
+                            <% announcements.forEach((ann, index) => { %>
+                                <div class="text-sm text-slate-300 leading-relaxed border-b border-slate-800/40 pb-2 last:border-0 last:pb-0">
+                                    <%= ann.announcement %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="glass-card">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                <p class="text-slate-400 text-sm">Login to your account to manage your requests</p>
+            </div>
+
+            <%- include('../partials/flash') %>
+
+            <form action="/auth/login" method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
+                    <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="email@example.com">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-slate-400">Password</label>
+                        <a href="#" class="text-xs text-primary-500 hover:text-primary-400">Forgot password?</a>
+                    </div>
+                    <input type="password" name="password" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="••••••••">
+                </div>
+                
+                <button type="submit" class="w-full btn-primary py-3 font-bold">Sign In</button>
+            </form>
+
+            <!-- Notes Section -->
+            <div class="mt-6 p-4 rounded-lg bg-slate-900/60 border border-slate-850 text-xs text-slate-400 space-y-2">
+                <div class="flex gap-2 items-start text-primary-400 font-semibold uppercase tracking-wider text-[10px]">
+                    <i class="fas fa-info-circle mt-0.5"></i>
+                    <span>Community Notes</span>
+                </div>
+                <p>Use your registered email and password to log in. To maintain platform security, active sessions persist for 12 hours before requiring re-authentication.</p>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-slate-800 text-center">
+                <p class="text-slate-400 text-sm">
+                    Don't have an account? <a href="/auth/register" class="text-primary-500 font-medium hover:text-primary-400">Create an account</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,20 @@
+<% if(success_msg != '') { %>
+    <div class="bg-emerald-900/30 border border-emerald-500/50 text-emerald-400 px-4 py-3 rounded-lg mb-6 flex items-center gap-3 animate-fade-in" role="alert">
+        <i class="fas fa-check-circle"></i>
+        <span class="text-sm font-medium"><%= success_msg %></span>
+    </div>
+<% } %>
+
+<% if(error_msg != '') { %>
+    <div class="bg-red-900/30 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-6 flex items-center gap-3 animate-fade-in" role="alert">
+        <i class="fas fa-exclamation-circle"></i>
+        <span class="text-sm font-medium"><%= error_msg %></span>
+    </div>
+<% } %>
+
+<% if(error != '') { %>
+    <div class="bg-red-900/30 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-6 flex items-center gap-3 animate-fade-in" role="alert">
+        <i class="fas fa-exclamation-circle"></i>
+        <span class="text-sm font-medium"><%= error %></span>
+    </div>
+<% } %>

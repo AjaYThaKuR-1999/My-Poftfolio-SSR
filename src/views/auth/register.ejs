@@ -1,0 +1,147 @@
+<section class="min-h-[90vh] flex flex-col items-center justify-center py-12">
+    <div class="max-w-lg w-full px-4">
+        <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
+            <!-- Latest Updates Toast -->
+            <div class="glass-card mb-6 border-l-4 border-l-primary-500 p-4 relative overflow-hidden backdrop-blur-md bg-slate-900/60 border border-slate-800/80 rounded-xl shadow-2xl">
+                <div class="flex items-start gap-3.5">
+                    <div class="shrink-0 relative mt-0.5">
+                        <span class="absolute inline-flex h-2 w-2 rounded-full bg-primary-400 opacity-75 animate-ping right-0 top-0"></span>
+                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400">
+                            <i class="fas fa-bullhorn text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Latest Updates</h4>
+                        <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1">
+                            <% announcements.forEach((ann, index) => { %>
+                                <div class="text-sm text-slate-300 leading-relaxed border-b border-slate-800/40 pb-2 last:border-0 last:pb-0">
+                                    <%= ann.announcement %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="glass-card">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-white mb-2">Join Community</h1>
+                <p class="text-slate-400 text-sm">Create an account to track your project requests and book appointments</p>
+            </div>
+
+            <%- include('../partials/flash') %>
+
+            <form action="/auth/register" method="POST" class="space-y-6">
+                <!-- Basic Info -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Full Name</label>
+                    <input type="text" name="name" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
+                    <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="email@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Password</label>
+                    <input type="password" name="password" required minlength="6" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="••••••••">
+                    <p class="mt-1 text-xs text-slate-500 text-center">Minimum 6 characters</p>
+                </div>
+
+                <!-- Collapsible Address & Social Links (Accordion) -->
+                <div class="border border-slate-850 rounded-lg overflow-hidden bg-slate-900/40">
+                    <button type="button" id="toggle-additional" class="w-full flex justify-between items-center px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white bg-slate-900/60 focus:outline-none transition-all">
+                        <span>Additional Profile Details (Optional)</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300" id="arrow-icon"></i>
+                    </button>
+                    
+                    <div id="additional-fields" class="hidden p-4 space-y-4 border-t border-slate-850">
+                        <!-- Address Grid -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Street</label>
+                                <input type="text" name="street" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="123 Main St">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Zip Code</label>
+                                <input type="text" name="zipCode" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="10001">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">City</label>
+                                <input type="text" name="city" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="New York">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">State</label>
+                                <input type="text" name="state" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="NY">
+                            </div>
+                        </div>
+
+                        <!-- Profile Picture -->
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Profile Picture URL</label>
+                            <input type="url" name="profilePicture" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://example.com/avatar.jpg">
+                        </div>
+
+                        <!-- Socials -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">GitHub URL</label>
+                                <input type="url" name="github" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://github.com/username">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">LinkedIn URL</label>
+                                <input type="url" name="linkedin" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://linkedin.com/in/username">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Facebook URL</label>
+                                <input type="url" name="facebook" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://facebook.com/username">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Twitter URL</label>
+                                <input type="url" name="twitter" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://twitter.com/username">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Instagram URL</label>
+                                <input type="url" name="instagram" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://instagram.com/username">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Website URL</label>
+                                <input type="url" name="website" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://example.com">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full btn-primary py-3 font-bold">Create Account</button>
+            </form>
+
+            <!-- Notes Section -->
+            <div class="mt-6 p-4 rounded-lg bg-slate-900/60 border border-slate-850 text-xs text-slate-400 space-y-2">
+                <div class="flex gap-2 items-start text-primary-400 font-semibold uppercase tracking-wider text-[10px]">
+                    <i class="fas fa-info-circle mt-0.5"></i>
+                    <span>Community Notes</span>
+                </div>
+                <p>Completing optional address and social link details helps verify your account and accelerates review times when requesting project assistance or scheduling consultations.</p>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-slate-800 text-center">
+                <p class="text-slate-400 text-sm">
+                    Already have an account? <a href="/auth/login" class="text-primary-500 font-medium hover:text-primary-400">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('toggle-additional');
+        const container = document.getElementById('additional-fields');
+        const arrow = document.getElementById('arrow-icon');
+
+        toggleBtn.addEventListener('click', () => {
+            container.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        });
+    });
+</script>
