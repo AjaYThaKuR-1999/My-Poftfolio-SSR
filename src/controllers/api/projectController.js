@@ -61,7 +61,7 @@ const apiCreateProject = async (req, res, next) => {
         // Process images files uploaded from Multer
         if (req.files && req.files.length > 0) {
             req.body.images = req.files.map(file => file.filename);
-        } else {
+        } else if (!req.body.images || (Array.isArray(req.body.images) && req.body.images.length === 0)) {
             req.body.images = ['no-photo.jpg'];
         }
 

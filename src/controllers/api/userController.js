@@ -11,10 +11,10 @@ const apiRegister = async (req, res, next) => {
             name,
             email,
             password,
-            city,
-            state,
-            street,
-            zipCode,
+            location,
+            bio,
+            userType,
+            seeking,
             profilePicture,
             github,
             linkedin,
@@ -29,12 +29,6 @@ const apiRegister = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Email already exists' });
         }
 
-        const address = {};
-        if (city) address.city = city;
-        if (state) address.state = state;
-        if (street) address.street = street;
-        if (zipCode) address.zipCode = zipCode;
-
         const socialProfileLinks = [];
         if (github) socialProfileLinks.push({ label: 'github', link: github });
         if (linkedin) socialProfileLinks.push({ label: 'linkedin', link: linkedin });
@@ -47,7 +41,10 @@ const apiRegister = async (req, res, next) => {
             name,
             email,
             password,
-            address,
+            location,
+            bio,
+            userType,
+            seeking,
             profilePicture,
             socialProfileLinks,
             role: 'user'
@@ -163,9 +160,93 @@ const apiLogout = (req, res) => {
     res.status(200).json({ success: true, message: 'Logged out successfully. Please discard your token.' });
 };
 
+// Get all registered users (excluding admins) — API (Admin only)
+const apiGetUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({ role: { $ne: 'admin' } });
+        res.status(200).json({ success: true, count: users.length, data: users });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Update logged-in user profile — API
+const apiUpdateMe = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const {
+            name,
+            email,
+            password,
+            location,
+            bio,
+            userType,
+            seeking,
+            profilePicture,
+            github,
+            linkedin,
+            facebook,
+            twitter,
+            instagram,
+            website
+        } = req.body;
+
+        // If email is changing, check for uniqueness
+        if (email && email !== user.email) {
+            const emailExists = await User.findOne({ email, isActive: true });
+            if (emailExists) {
+                return res.status(400).json({ success: false, message: 'Email already in use' });
+            }
+            user.email = email;
+        }
+
+        if (name) user.name = name;
+        if (password) user.password = password; // pre('save') will hash this automatically
+        if (profilePicture !== undefined) user.profilePicture = profilePicture;
+        if (location !== undefined) user.location = location;
+        if (bio !== undefined) user.bio = bio;
+        if (userType !== undefined) user.userType = userType;
+        if (seeking !== undefined) user.seeking = seeking;
+
+        // Update social links
+        const socials = { github, linkedin, facebook, twitter, instagram, website };
+        Object.entries(socials).forEach(([label, link]) => {
+            if (link !== undefined) {
+                const existingIdx = user.socialProfileLinks.findIndex(s => s.label === label);
+                if (link === '') {
+                    // Remove if empty
+                    if (existingIdx !== -1) user.socialProfileLinks.splice(existingIdx, 1);
+                } else {
+                    if (existingIdx !== -1) {
+                        user.socialProfileLinks[existingIdx].link = link;
+                    } else {
+                        user.socialProfileLinks.push({ label, link });
+                    }
+                }
+            }
+        });
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: user
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     apiRegister,
     apiLogin,
     apiGetMe,
-    apiLogout
+    apiLogout,
+    apiGetUsers,
+    apiUpdateMe
 };

@@ -1,133 +1,276 @@
-<section class="min-h-[90vh] flex flex-col items-center justify-center py-12">
-    <div class="max-w-lg w-full px-4">
-        <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
-            <!-- Latest Updates Toast -->
-            <div class="glass-card mb-6 border-l-4 border-l-primary-500 p-4 relative overflow-hidden backdrop-blur-md bg-slate-900/60 border border-slate-800/80 rounded-xl shadow-2xl">
-                <div class="flex items-start gap-3.5">
-                    <div class="shrink-0 relative mt-0.5">
-                        <span class="absolute inline-flex h-2 w-2 rounded-full bg-primary-400 opacity-75 animate-ping right-0 top-0"></span>
-                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400">
-                            <i class="fas fa-bullhorn text-sm"></i>
+<section class="min-h-[85vh] flex flex-col items-center pb-12 w-full" style="padding-top: 140px;">
+    <!-- Main Container -->
+    <div class="max-w-7xl w-full px-4 mx-auto mt-6 animate-fade-in">
+        <div class="flex flex-col lg:flex-row items-stretch gap-8">
+            
+            <!-- Left: Announcements Panel -->
+            <div class="w-full lg:w-[320px] xl:w-[350px] shrink-0 flex">
+                <div class="glass-card flex-grow flex flex-col p-6 overflow-hidden relative border border-slate-800/80 bg-slate-900/40 backdrop-blur-md rounded-xl">
+                    <!-- Title/Badge -->
+                    <div class="mb-4 shrink-0">
+                        <div class="flex items-center gap-2 text-primary-400 font-bold uppercase tracking-wider text-[11px] mb-1">
+                            <i class="fas fa-bullhorn animate-pulse"></i>
+                            <span>Latest Updates</span>
                         </div>
+                        <h2 class="text-xl font-bold text-white">Announcements</h2>
+                        <p class="text-slate-400 text-xs mt-1">Stay updated with community news, project releases, and consultation schedules.</p>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Latest Updates</h4>
-                        <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1">
-                            <% announcements.forEach((ann, index) => { %>
-                                <div class="text-sm text-slate-300 leading-relaxed border-b border-slate-800/40 pb-2 last:border-0 last:pb-0">
-                                    <%= ann.announcement %>
-                                </div>
-                            <% }); %>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <% } %>
-
-        <div class="glass-card">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white mb-2">Join Community</h1>
-                <p class="text-slate-400 text-sm">Create an account to track your project requests and book appointments</p>
-            </div>
-
-            <%- include('../partials/flash') %>
-
-            <form action="/auth/register" method="POST" class="space-y-6">
-                <!-- Basic Info -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-2">Full Name</label>
-                    <input type="text" name="name" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="John Doe">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
-                    <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="email@example.com">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-2">Password</label>
-                    <input type="password" name="password" required minlength="6" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="••••••••">
-                    <p class="mt-1 text-xs text-slate-500 text-center">Minimum 6 characters</p>
-                </div>
-
-                <!-- Collapsible Address & Social Links (Accordion) -->
-                <div class="border border-slate-850 rounded-lg overflow-hidden bg-slate-900/40">
-                    <button type="button" id="toggle-additional" class="w-full flex justify-between items-center px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white bg-slate-900/60 focus:outline-none transition-all">
-                        <span>Additional Profile Details (Optional)</span>
-                        <i class="fas fa-chevron-down transition-transform duration-300" id="arrow-icon"></i>
-                    </button>
                     
-                    <div id="additional-fields" class="hidden p-4 space-y-4 border-t border-slate-850">
-                        <!-- Address Grid -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Street</label>
-                                <input type="text" name="street" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="123 Main St">
+                    <div class="h-[1px] bg-slate-800/60 mb-6 shrink-0"></div>
+                    
+                    <!-- Scrolling Container -->
+                    <div id="announcements-viewport" class="relative flex-grow overflow-hidden min-h-[350px] cursor-pointer">
+                        <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
+                            <div id="announcements-track" class="absolute left-0 right-0 top-0 space-y-4" style="will-change: transform; transform: translate3d(0, 0, 0); backface-visibility: hidden;">
+                                <% announcements.forEach((ann, index) => { %>
+                                    <div class="announcement-item p-4 rounded-lg bg-slate-950/60 border border-slate-850 hover:border-primary-500/40 hover:bg-slate-900/40 transition-all duration-300 shadow-sm flex gap-3 items-start group">
+                                        <div class="w-8 h-8 rounded-lg bg-primary-600/10 border border-primary-500/30 flex items-center justify-center text-primary-400 group-hover:bg-primary-600/20 group-hover:border-primary-500/50 shrink-0 mt-0.5 transition-colors">
+                                            <i class="fas fa-bullhorn text-xs"></i>
+                                        </div>
+                                        <div class="flex-grow space-y-1">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-[10px] uppercase font-bold text-primary-400 tracking-wider">Update #<%= index + 1 %></span>
+                                                <span class="text-[10px] text-slate-500"><%= new Date(ann.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %></span>
+                                            </div>
+                                            <p class="text-xs text-slate-300 leading-relaxed group-hover:text-white transition-colors"><%= ann.announcement %></p>
+                                        </div>
+                                    </div>
+                                <% }) %>
                             </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Zip Code</label>
-                                <input type="text" name="zipCode" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="10001">
+                        <% } else { %>
+                            <div class="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 py-12">
+                                <i class="fas fa-info-circle text-2xl text-slate-600"></i>
+                                <span class="text-xs">No active announcements</span>
                             </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">City</label>
-                                <input type="text" name="city" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="New York">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">State</label>
-                                <input type="text" name="state" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="NY">
-                            </div>
-                        </div>
-
-                        <!-- Profile Picture -->
-                        <div>
-                            <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Profile Picture URL</label>
-                            <input type="url" name="profilePicture" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://example.com/avatar.jpg">
-                        </div>
-
-                        <!-- Socials -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">GitHub URL</label>
-                                <input type="url" name="github" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://github.com/username">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">LinkedIn URL</label>
-                                <input type="url" name="linkedin" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://linkedin.com/in/username">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Facebook URL</label>
-                                <input type="url" name="facebook" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://facebook.com/username">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Twitter URL</label>
-                                <input type="url" name="twitter" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://twitter.com/username">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Instagram URL</label>
-                                <input type="url" name="instagram" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://instagram.com/username">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-medium text-slate-500 mb-1 uppercase tracking-wider">Website URL</label>
-                                <input type="url" name="website" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="https://example.com">
-                            </div>
-                        </div>
+                        <% } %>
                     </div>
                 </div>
-                
-                <button type="submit" class="w-full btn-primary py-3 font-bold">Create Account</button>
-            </form>
-
-            <!-- Notes Section -->
-            <div class="mt-6 p-4 rounded-lg bg-slate-900/60 border border-slate-850 text-xs text-slate-400 space-y-2">
-                <div class="flex gap-2 items-start text-primary-400 font-semibold uppercase tracking-wider text-[10px]">
-                    <i class="fas fa-info-circle mt-0.5"></i>
-                    <span>Community Notes</span>
-                </div>
-                <p>Completing optional address and social link details helps verify your account and accelerates review times when requesting project assistance or scheduling consultations.</p>
             </div>
+            
+            <!-- Right: Sign Up Form -->
+            <div class="flex-grow flex">
+                <div class="glass-card flex-grow p-6 lg:p-8 border border-slate-800/80 bg-slate-900/40 backdrop-blur-md rounded-xl">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-white mb-2">Join Community</h1>
+                        <p class="text-slate-400 text-sm">Create an account to track your project requests and book appointments</p>
+                    </div>
 
-            <div class="mt-8 pt-8 border-t border-slate-800 text-center">
-                <p class="text-slate-400 text-sm">
-                    Already have an account? <a href="/auth/login" class="text-primary-500 font-medium hover:text-primary-400">Sign in</a>
-                </p>
+                    <%- include('../partials/flash') %>
+
+                    <form action="/auth/register" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        <!-- Section 1: Account Details -->
+                        <div class="space-y-4">
+                            <h3 class="text-xs font-semibold text-primary-400 uppercase tracking-wider border-b border-slate-800 pb-2 flex items-center gap-2">
+                                <i class="fas fa-user-circle"></i>
+                                <span>1. Account Details</span>
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Full Name</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-user text-xs"></i>
+                                        </span>
+                                        <input type="text" name="name" required class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300" placeholder="John Doe">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Email Address</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-envelope text-xs"></i>
+                                        </span>
+                                        <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300" placeholder="email@example.com">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Password</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-lock text-xs"></i>
+                                        </span>
+                                        <input type="password" name="password" required minlength="6" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300" placeholder="••••••••">
+                                    </div>
+                                    <p class="mt-1 text-[10px] text-slate-500">Minimum 6 characters</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Profile Picture (Optional)</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-image text-xs"></i>
+                                        </span>
+                                        <input type="file" name="profilePicture" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-xs text-slate-400 focus:border-primary-500 focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-primary-600/10 file:text-primary-400 hover:file:bg-primary-600/20 file:cursor-pointer cursor-pointer transition-all">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Professional Role -->
+                        <div class="space-y-4 pt-2">
+                            <h3 class="text-xs font-semibold text-primary-400 uppercase tracking-wider border-b border-slate-800 pb-2 flex items-center gap-2">
+                                <i class="fas fa-briefcase"></i>
+                                <span>2. Professional Role</span>
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">I am a...</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-id-badge text-xs"></i>
+                                        </span>
+                                        <select name="userType" required class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-8 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300 appearance-none cursor-pointer">
+                                            <option value="developer">Developer</option>
+                                            <option value="recruiter">Recruiter / Sourcing Agent</option>
+                                            <option value="project_provider">Project Provider / Client</option>
+                                            <option value="hobbyist">Hobbyist / Tech Enthusiast</option>
+                                            <option value="other" selected>Other / Visitor</option>
+                                        </select>
+                                        <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">I am here to...</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-bullseye text-xs"></i>
+                                        </span>
+                                        <select name="seeking" required class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-8 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300 appearance-none cursor-pointer">
+                                            <option value="hiring_talent">Hire a Developer / Sourcing Talent</option>
+                                            <option value="freelance_work">Discuss a Freelance/Contract Project</option>
+                                            <option value="collaboration">Collaborate on a Project</option>
+                                            <option value="networking">Network and Connect</option>
+                                            <option value="exploration">Explore work / Get inspiration</option>
+                                            <option value="other" selected>Just browsing around</option>
+                                        </select>
+                                        <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Additional Details (Accordion) -->
+                        <div class="border border-slate-850 rounded-lg overflow-hidden bg-slate-900/20">
+                            <button type="button" id="toggle-additional" class="w-full flex justify-between items-center px-4 py-3.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-900/40 hover:bg-slate-900/60 focus:outline-none transition-all duration-300">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-info-circle text-primary-400"></i>
+                                    <span>3. Additional Details</span>
+                                </span>
+                                <i class="fas fa-chevron-down transition-transform duration-300 rotate-180" id="arrow-icon"></i>
+                            </button>
+                            
+                            <div id="additional-fields" class="p-5 space-y-6 border-t border-slate-850 bg-slate-950/20">
+                                <!-- Location & Bio Grid -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[11px] font-medium text-slate-400 mb-2 uppercase tracking-wider">Current Location</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 pointer-events-none">
+                                                <i class="fas fa-map-marker-alt text-xs"></i>
+                                            </span>
+                                            <input type="text" name="location" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2.5 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="e.g. San Francisco, CA">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-medium text-slate-400 mb-2 uppercase tracking-wider">Professional Tagline / Bio</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 pointer-events-none">
+                                                <i class="fas fa-pen text-xs"></i>
+                                            </span>
+                                            <input type="text" name="bio" maxlength="250" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2.5 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="e.g. Fullstack Developer | Open Source">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Socials -->
+                                <div class="space-y-3">
+                                    <span class="block text-[10px] font-bold text-primary-400 uppercase tracking-wider mb-2">Connect Your Accounts</span>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-slate-500 mb-1.5 uppercase tracking-wide">GitHub</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-600">
+                                                    <i class="fab fa-github text-xs"></i>
+                                                </span>
+                                                <input type="url" name="github" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="https://github.com/...">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-slate-500 mb-1.5 uppercase tracking-wide">LinkedIn</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-600">
+                                                    <i class="fab fa-linkedin text-xs"></i>
+                                                </span>
+                                                <input type="url" name="linkedin" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="https://linkedin.com/in/...">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-slate-500 mb-1.5 uppercase tracking-wide">Website</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-600">
+                                                    <i class="fas fa-globe text-xs"></i>
+                                                </span>
+                                                <input type="url" name="website" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="https://...">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-slate-500 mb-1.5 uppercase tracking-wide">Twitter</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-600">
+                                                    <i class="fab fa-twitter text-xs"></i>
+                                                </span>
+                                                <input type="url" name="twitter" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="https://twitter.com/...">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-slate-500 mb-1.5 uppercase tracking-wide">Instagram</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-600">
+                                                    <i class="fab fa-instagram text-xs"></i>
+                                                </span>
+                                                <input type="url" name="instagram" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="https://instagram.com/...">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-slate-500 mb-1.5 uppercase tracking-wide">Facebook</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-600">
+                                                    <i class="fab fa-facebook text-xs"></i>
+                                                </span>
+                                                <input type="url" name="facebook" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-white focus:border-primary-500 focus:outline-none transition-all" placeholder="https://facebook.com/...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full btn-primary py-3.5 font-bold text-sm tracking-wider uppercase shadow-primary-500/25 hover:shadow-primary-500/40">Create Account</button>
+                    </form>
+
+                    <!-- Notes Section -->
+                    <div class="mt-6 p-4 rounded-lg bg-slate-900/40 border border-slate-850 text-xs text-slate-400 space-y-2">
+                        <div class="flex gap-2 items-start text-primary-400 font-semibold uppercase tracking-wider text-[10px]">
+                            <i class="fas fa-info-circle mt-0.5"></i>
+                            <span>Community Notes</span>
+                        </div>
+                        <p>Completing optional address and social link details helps verify your account and accelerates review times when requesting project assistance or scheduling consultations.</p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-800/80 text-center">
+                        <p class="text-slate-400 text-sm">
+                            Already have an account? <a href="/auth/login" class="text-primary-500 font-medium hover:text-primary-400 hover:underline transition-colors">Sign in</a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -135,13 +278,61 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Accordion Toggle
         const toggleBtn = document.getElementById('toggle-additional');
         const container = document.getElementById('additional-fields');
         const arrow = document.getElementById('arrow-icon');
 
-        toggleBtn.addEventListener('click', () => {
-            container.classList.toggle('hidden');
-            arrow.classList.toggle('rotate-180');
-        });
+        if (toggleBtn && container && arrow) {
+            toggleBtn.addEventListener('click', () => {
+                container.classList.toggle('hidden');
+                arrow.classList.toggle('rotate-180');
+            });
+        }
+
+        // Vertical Loop Scroll for Announcements
+        const view = document.getElementById('announcements-viewport');
+        const track = document.getElementById('announcements-track');
+        if (view && track) {
+            const items = track.querySelectorAll('.announcement-item');
+            if (items.length > 0) {
+                // Duplicate track content to ensure we have enough height to loop
+                const content = track.innerHTML;
+                track.innerHTML = content + content + content;
+                
+                let position = 0;
+                const speed = 0.5; // pixels per frame
+                let animationId = null;
+                
+                // Get the height of one full set of items
+                const singleSetHeight = track.scrollHeight / 3;
+                
+                function scrollStep() {
+                    position += speed;
+                    if (position >= singleSetHeight) {
+                        position = 0;
+                    }
+                    track.style.transform = `translate3d(0, -${position}px, 0)`;
+                    animationId = requestAnimationFrame(scrollStep);
+                }
+                
+                // Start animation
+                animationId = requestAnimationFrame(scrollStep);
+                
+                // Pause scroll on hover
+                view.addEventListener('mouseenter', () => {
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                        animationId = null;
+                    }
+                });
+                
+                view.addEventListener('mouseleave', () => {
+                    if (!animationId) {
+                        animationId = requestAnimationFrame(scrollStep);
+                    }
+                });
+            }
+        }
     });
 </script>

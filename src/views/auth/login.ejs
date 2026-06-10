@@ -1,67 +1,158 @@
-<section class="min-h-[80vh] flex flex-col items-center justify-center py-12">
-    <div class="max-w-md w-full px-4">
-        <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
-            <!-- Latest Updates Toast -->
-            <div class="glass-card mb-6 border-l-4 border-l-primary-500 p-4 relative overflow-hidden backdrop-blur-md bg-slate-900/60 border border-slate-800/80 rounded-xl shadow-2xl">
-                <div class="flex items-start gap-3.5">
-                    <div class="shrink-0 relative mt-0.5">
-                        <span class="absolute inline-flex h-2 w-2 rounded-full bg-primary-400 opacity-75 animate-ping right-0 top-0"></span>
-                        <div class="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-400">
-                            <i class="fas fa-bullhorn text-sm"></i>
+<section class="min-h-[80vh] flex flex-col items-center pb-12 w-full" style="padding-top: 140px;">
+    <!-- Main Container -->
+    <div class="max-w-7xl w-full px-4 mx-auto mt-6 animate-fade-in">
+        <div class="flex flex-col lg:flex-row items-stretch gap-8">
+            
+            <!-- Left: Announcements Panel -->
+            <div class="flex-grow flex">
+                <div class="glass-card flex-grow flex flex-col p-6 overflow-hidden relative border border-slate-800/80 bg-slate-900/40 backdrop-blur-md rounded-xl">
+                    <!-- Title/Badge -->
+                    <div class="mb-4 shrink-0">
+                        <div class="flex items-center gap-2 text-primary-400 font-bold uppercase tracking-wider text-[11px] mb-1">
+                            <i class="fas fa-bullhorn animate-pulse"></i>
+                            <span>Latest Updates</span>
                         </div>
+                        <h2 class="text-xl font-bold text-white">Announcements</h2>
+                        <p class="text-slate-400 text-xs mt-1">Stay updated with community news, project releases, and consultation schedules.</p>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Latest Updates</h4>
-                        <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1">
-                            <% announcements.forEach((ann, index) => { %>
-                                <div class="text-sm text-slate-300 leading-relaxed border-b border-slate-800/40 pb-2 last:border-0 last:pb-0">
-                                    <%= ann.announcement %>
+                    
+                    <div class="h-[1px] bg-slate-800/60 mb-6 shrink-0"></div>
+                    
+                    <!-- Scrolling Container -->
+                    <div id="announcements-viewport" class="relative flex-grow overflow-hidden min-h-[350px] cursor-pointer">
+                        <% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
+                            <div id="announcements-track" class="absolute left-0 right-0 top-0 space-y-4" style="will-change: transform; transform: translate3d(0, 0, 0); backface-visibility: hidden;">
+                                <% announcements.forEach((ann, index) => { %>
+                                    <div class="announcement-item p-4 rounded-lg bg-slate-950/60 border border-slate-850 hover:border-primary-500/40 hover:bg-slate-900/40 transition-all duration-300 shadow-sm flex gap-3 items-start group">
+                                        <div class="w-8 h-8 rounded-lg bg-primary-600/10 border border-primary-500/30 flex items-center justify-center text-primary-400 group-hover:bg-primary-600/20 group-hover:border-primary-500/50 shrink-0 mt-0.5 transition-colors">
+                                            <i class="fas fa-bullhorn text-xs"></i>
+                                        </div>
+                                        <div class="flex-grow space-y-1">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-[10px] uppercase font-bold text-primary-400 tracking-wider">Update #<%= index + 1 %></span>
+                                                <span class="text-[10px] text-slate-500"><%= new Date(ann.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %></span>
+                                            </div>
+                                            <p class="text-xs text-slate-300 leading-relaxed group-hover:text-white transition-colors"><%= ann.announcement %></p>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="h-full flex flex-col items-center justify-center text-slate-500 space-y-2 py-12">
+                                <i class="fas fa-info-circle text-2xl text-slate-600"></i>
+                                <span class="text-xs">No active announcements</span>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right: Sign In Form -->
+            <div class="w-full lg:w-[450px] xl:w-[480px] shrink-0 flex">
+                <div class="glass-card flex-grow p-6 lg:p-8 border border-slate-800/80 bg-slate-900/40 backdrop-blur-md rounded-xl flex flex-col justify-between">
+                    <div>
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                            <p class="text-slate-400 text-sm">Login to your account to manage your requests</p>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                        <form action="/auth/login" method="POST" class="space-y-6">
+                            <!-- Credentials Stack -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Email Address</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-envelope text-xs"></i>
+                                        </span>
+                                        <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300" placeholder="email@example.com">
+                                    </div>
                                 </div>
-                            <% }); %>
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="block text-xs font-medium text-slate-400 uppercase tracking-wide">Password</label>
+                                        <a href="#" class="text-xs text-primary-500 hover:text-primary-400 hover:underline transition-colors">Forgot password?</a>
+                                    </div>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 pointer-events-none">
+                                            <i class="fas fa-lock text-xs"></i>
+                                        </span>
+                                        <input type="password" name="password" required class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all duration-300" placeholder="••••••••">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full btn-primary py-3.5 font-bold text-sm tracking-wider uppercase shadow-primary-500/25 hover:shadow-primary-500/40">Sign In</button>
+                        </form>
+
+                        <!-- Notes Section -->
+                        <div class="mt-6 p-4 rounded-lg bg-slate-900/40 border border-slate-850 text-xs text-slate-400 space-y-2">
+                            <div class="flex gap-2 items-start text-primary-400 font-semibold uppercase tracking-wider text-[10px]">
+                                <i class="fas fa-info-circle mt-0.5"></i>
+                                <span>Community Notes</span>
+                            </div>
+                            <p>Use your registered email and password to log in. To maintain platform security, active sessions persist for 12 hours before requiring re-authentication.</p>
                         </div>
                     </div>
-                </div>
-            </div>
-        <% } %>
 
-        <div class="glass-card">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-                <p class="text-slate-400 text-sm">Login to your account to manage your requests</p>
-            </div>
-
-            <%- include('../partials/flash') %>
-
-            <form action="/auth/login" method="POST" class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-2">Email Address</label>
-                    <input type="email" name="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="email@example.com">
-                </div>
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-sm font-medium text-slate-400">Password</label>
-                        <a href="#" class="text-xs text-primary-500 hover:text-primary-400">Forgot password?</a>
+                    <div class="mt-8 pt-6 border-t border-slate-800/80 text-center">
+                        <p class="text-slate-400 text-sm">
+                            Don't have an account? <a href="/auth/register" class="text-primary-500 font-medium hover:text-primary-400 hover:underline transition-colors">Create an account</a>
+                        </p>
                     </div>
-                    <input type="password" name="password" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-white focus:border-primary-500 focus:outline-none transition-colors" placeholder="••••••••">
                 </div>
-                
-                <button type="submit" class="w-full btn-primary py-3 font-bold">Sign In</button>
-            </form>
-
-            <!-- Notes Section -->
-            <div class="mt-6 p-4 rounded-lg bg-slate-900/60 border border-slate-850 text-xs text-slate-400 space-y-2">
-                <div class="flex gap-2 items-start text-primary-400 font-semibold uppercase tracking-wider text-[10px]">
-                    <i class="fas fa-info-circle mt-0.5"></i>
-                    <span>Community Notes</span>
-                </div>
-                <p>Use your registered email and password to log in. To maintain platform security, active sessions persist for 12 hours before requiring re-authentication.</p>
-            </div>
-
-            <div class="mt-8 pt-8 border-t border-slate-800 text-center">
-                <p class="text-slate-400 text-sm">
-                    Don't have an account? <a href="/auth/register" class="text-primary-500 font-medium hover:text-primary-400">Create an account</a>
-                </p>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vertical Loop Scroll for Announcements
+        const view = document.getElementById('announcements-viewport');
+        const track = document.getElementById('announcements-track');
+        if (view && track) {
+            const items = track.querySelectorAll('.announcement-item');
+            if (items.length > 0) {
+                // Duplicate track content to ensure we have enough height to loop
+                const content = track.innerHTML;
+                track.innerHTML = content + content + content;
+                
+                let position = 0;
+                const speed = 0.5; // pixels per frame
+                let animationId = null;
+                
+                // Get the height of one full set of items
+                const singleSetHeight = track.scrollHeight / 3;
+                
+                function scrollStep() {
+                    position += speed;
+                    if (position >= singleSetHeight) {
+                        position = 0;
+                    }
+                    track.style.transform = `translate3d(0, -${position}px, 0)`;
+                    animationId = requestAnimationFrame(scrollStep);
+                }
+                
+                // Start animation
+                animationId = requestAnimationFrame(scrollStep);
+                
+                // Pause scroll on hover
+                view.addEventListener('mouseenter', () => {
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                        animationId = null;
+                    }
+                });
+                
+                view.addEventListener('mouseleave', () => {
+                    if (!animationId) {
+                        animationId = requestAnimationFrame(scrollStep);
+                    }
+                });
+            }
+        }
+    });
+</script>

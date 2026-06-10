@@ -1,0 +1,71 @@
+<% if (typeof announcements !== 'undefined' && announcements && announcements.length > 0) { %>
+    <!-- Full-Width Announcements News Ticker - Fixed below navbar -->
+    <div class="fixed left-0 w-full overflow-hidden backdrop-blur-md shadow-lg z-40" style="top: 96px; background-color: rgba(2, 6, 23, 0.95); border-bottom: 1px solid rgba(51, 65, 85, 0.35); padding-top: 12px; padding-bottom: 12px;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4">
+            <!-- Ticker Title / Badge -->
+            <div class="shrink-0 flex items-center gap-2 bg-primary-600/15 border border-primary-500/30 text-primary-400 font-bold uppercase tracking-wider text-[10px] px-3 py-1 rounded shadow-sm">
+                <i class="fas fa-bullhorn animate-pulse"></i>
+                <span>Latest Update</span>
+            </div>
+            
+            <!-- Scrolling Track -->
+            <div id="ticker-track" class="flex-1 overflow-hidden relative" style="height: 20px;" data-announcements="<%= JSON.stringify(announcements) %>">
+                <div id="announcement-ticker" class="absolute whitespace-nowrap text-sm font-semibold text-slate-200" style="left: 100%; top: 0; line-height: 20px;">
+                    <!-- Content will be injected dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('ticker-track');
+            if (!track) return;
+            
+            const rawAnnouncements = JSON.parse(track.getAttribute('data-announcements') || '[]');
+            const messages = rawAnnouncements.map(ann => ann.announcement || ann.content || '').filter(Boolean);
+            
+            if (messages.length === 0) return;
+
+            const ticker = document.getElementById('announcement-ticker');
+            if (!ticker) return;
+            
+            let currentIndex = 0;
+
+            const scrollNext = () => {
+                const currentMessage = messages[currentIndex];
+                ticker.textContent = currentMessage;
+                
+                // Disable transitions during layout reset
+                ticker.style.transition = 'none';
+                
+                // Fallback to clientWidth or window width
+                const trackWidth = track.offsetWidth || track.clientWidth || window.innerWidth || 800;
+                
+                // Move text to starting position
+                ticker.style.left = `${trackWidth}px`;
+                
+                // Force layout recalculation to ensure the jump to starting position is applied instantly
+                ticker.offsetHeight;
+                
+                const textWidth = ticker.offsetWidth || ticker.clientWidth || 300;
+                // Calculate speed based on distance so longer messages don't move too fast
+                const speed = 80; // pixels per second
+                const duration = (trackWidth + textWidth) / speed;
+                
+                ticker.style.transition = `left ${duration}s linear`;
+                ticker.style.left = `-${textWidth}px`;
+            };
+
+            ticker.addEventListener('transitionend', (e) => {
+                if (e.propertyName === 'left') {
+                    currentIndex = (currentIndex + 1) % messages.length;
+                    scrollNext();
+                }
+            });
+
+            // Start animation slightly delayed
+            setTimeout(scrollNext, 100);
+        });
+    </script>
+<% } %>

@@ -2,8 +2,17 @@ const express = require('express');
 const { ssrRegister, ssrLogin, ssrLogout } = require('../../controllers/ssr/userController');
 const { validate, schemas } = require('../../middleware/validate');
 const Announcement = require('../../models/Announcement');
+const upload = require('../../utils/multer');
 
 const router = express.Router();
+
+// Helper middleware to handle profile picture file input mapping
+const handleProfilePictureUpload = (req, res, next) => {
+    if (req.file) {
+        req.body.profilePicture = `/uploads/${req.file.filename}`;
+    }
+    next();
+};
 
 // ── View pages ────────────────────────────────────────────────────────────────
 router.get('/login', async (req, res, next) => {
@@ -25,7 +34,7 @@ router.get('/register', async (req, res, next) => {
 });
 
 // ── SSR form submissions ──────────────────────────────────────────────────────
-router.post('/register', validate(schemas.register), ssrRegister);
+router.post('/register', upload.single('profilePicture'), handleProfilePictureUpload, validate(schemas.register), ssrRegister);
 router.post('/login',    validate(schemas.login),    ssrLogin);
 router.get('/logout',    ssrLogout);
 

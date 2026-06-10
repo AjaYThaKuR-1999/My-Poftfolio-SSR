@@ -21,8 +21,17 @@
                                 </div>
                             <% } %>
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
-                            <div class="absolute top-4 right-4">
-                                <span class="px-3 py-1 bg-primary-600 text-white text-xs font-bold rounded-full uppercase"><%= project.category %></span>
+                            <div class="absolute top-4 right-4 flex flex-col items-end gap-2">
+                                <span class="px-3 py-1 bg-primary-600/90 backdrop-blur-sm text-white text-[10px] font-bold rounded-md uppercase tracking-wider shadow-sm"><%= project.category %></span>
+                                <% if (project.projectType === 'professional') { %>
+                                    <span class="px-2.5 py-0.5 bg-emerald-600/90 backdrop-blur-sm text-white text-[9px] font-bold rounded-md uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                        <i class="fas fa-briefcase text-[9px]"></i> Work
+                                    </span>
+                                <% } else { %>
+                                    <span class="px-2.5 py-0.5 bg-blue-600/90 backdrop-blur-sm text-white text-[9px] font-bold rounded-md uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                        <i class="fas fa-user-cog text-[9px]"></i> Personal
+                                    </span>
+                                <% } %>
                             </div>
                         </div>
 

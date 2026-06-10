@@ -22,10 +22,10 @@ const ssrRegister = async (req, res, next) => {
             name,
             email,
             password,
-            city,
-            state,
-            street,
-            zipCode,
+            location,
+            bio,
+            userType,
+            seeking,
             profilePicture,
             github,
             linkedin,
@@ -41,12 +41,6 @@ const ssrRegister = async (req, res, next) => {
             return res.redirect('/auth/register');
         }
 
-        const address = {};
-        if (city) address.city = city;
-        if (state) address.state = state;
-        if (street) address.street = street;
-        if (zipCode) address.zipCode = zipCode;
-
         const socialProfileLinks = [];
         if (github) socialProfileLinks.push({ label: 'github', link: github });
         if (linkedin) socialProfileLinks.push({ label: 'linkedin', link: linkedin });
@@ -59,7 +53,10 @@ const ssrRegister = async (req, res, next) => {
             name,
             email,
             password,
-            address,
+            location,
+            bio,
+            userType,
+            seeking,
             profilePicture,
             socialProfileLinks,
             role: 'user'

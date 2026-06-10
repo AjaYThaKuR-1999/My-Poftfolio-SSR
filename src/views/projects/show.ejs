@@ -14,9 +14,20 @@
             <!-- Left Column: Case Study Details -->
             <div class="lg:col-span-2 space-y-8">
                 <div class="glass-card p-8 md:p-10 border-slate-700/50">
-                    <span class="px-3 py-1 bg-primary-600/20 text-primary-400 border border-primary-500/30 text-xs font-bold rounded-full uppercase tracking-wider mb-6 inline-block">
-                        <%= project.category %>
-                    </span>
+                    <div class="flex flex-wrap gap-3 mb-6 items-center">
+                        <span class="px-3 py-1 bg-primary-600/20 text-primary-400 border border-primary-500/30 text-xs font-bold rounded-full uppercase tracking-wider">
+                            <%= project.category %>
+                        </span>
+                        <% if (project.projectType === 'professional') { %>
+                            <span class="px-3 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-briefcase"></i> Professional Work
+                            </span>
+                        <% } else { %>
+                            <span class="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs font-bold rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-user-cog"></i> Personal Project
+                            </span>
+                        <% } %>
+                    </div>
                     <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-6"><%= project.title %></h1>
                     
                     <div class="h-[2px] bg-gradient-to-r from-primary-500 to-transparent mb-8"></div>

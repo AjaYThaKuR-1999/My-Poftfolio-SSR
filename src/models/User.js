@@ -26,19 +26,24 @@ const UserSchema = new mongoose.Schema({
         minlength: 6,
         select: false
     },
-    address: {
-        street: {
-            type: String,
-        },
-        city: {
-            type: String,
-        },
-        state: {
-            type: String,
-        },
-        zipCode: {
-            type: String,
-        }
+    location: {
+        type: String,
+    },
+    bio: {
+        type: String,
+        maxlength: 250
+    },
+    userType: {
+        type: String,
+        enum: ['developer', 'recruiter', 'project_provider', 'hobbyist', 'other'],
+        default: 'other',
+        required: true
+    },
+    seeking: {
+        type: String,
+        enum: ['hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other'],
+        default: 'other',
+        required: true
     },
     profilePicture: {
         type: String,
