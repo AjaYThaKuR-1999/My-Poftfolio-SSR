@@ -125,8 +125,9 @@ const apiGetMe = async (req, res, next) => {
 const createWelcomeAnnouncement = async (userName) => {
     const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     return Announcements.create({
-        announcement: `Let us welcome a new member ${userName} to our community. Thanks for joining us here.`,
-        endDate: oneWeekFromNow
+        announcement: `🎉 Let us welcome a new member, ${userName} to our community. 😊 Thanks for joining us here. 🙌`,
+        endDate: oneWeekFromNow,
+        type: 'community'
     });
 };
 
@@ -139,7 +140,8 @@ const findOrUpdateMemberCountAnnouncement = async (usersCount) => {
     if (!existingAnnouncement) {
         return Announcements.create({
             announcement: updatedAnnouncementText,
-            endDate: oneWeekFromNow
+            endDate: oneWeekFromNow,
+            type: 'community'
         });
     } else if (existingAnnouncement.isActive && existingAnnouncement.endDate > new Date()) {
         return Announcements.findByIdAndUpdate(existingAnnouncement._id, {
@@ -230,7 +232,11 @@ const apiUpdateMe = async (req, res, next) => {
             }
         });
 
-        await user.save();
+        if (user.role === 'admin') {
+            await user.save({ validateBeforeSave: false });
+        } else {
+            await user.save();
+        }
 
         res.status(200).json({
             success: true,

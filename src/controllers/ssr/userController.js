@@ -123,8 +123,9 @@ const ssrLogout = (req, res) => {
 const createWelcomeAnnouncement = async (userName) => {
     const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     return Announcements.create({
-        announcement: `Let us welcome a new member ${userName} to our community. Thanks for joining us here.`,
-        endDate: oneWeekFromNow
+        announcement: `🎉 Let us welcome a new member, ${userName} to our community. 😊 Thanks for joining us here. 🙌`,
+        endDate: oneWeekFromNow,
+        type: 'community'
     });
 };
 
@@ -132,12 +133,13 @@ const createWelcomeAnnouncement = async (userName) => {
 const findOrUpdateMemberCountAnnouncement = async (usersCount) => {
     const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const existingAnnouncement = await Announcements.findOne({ announcement: { $regex: /^🎉 Our community has reached \d+ members/i } });
-    const updatedAnnouncementText = `🎉 Our community has reached ${usersCount} members! Thank you all for being here.`;
+    const updatedAnnouncementText = `🎉 Our community has reached ${usersCount} members! 🥳 Thank you all for being here. 🙌😊`;
 
     if (!existingAnnouncement) {
         return Announcements.create({
             announcement: updatedAnnouncementText,
-            endDate: oneWeekFromNow
+            endDate: oneWeekFromNow,
+            type: 'community'
         });
     } else if (existingAnnouncement.isActive && existingAnnouncement.endDate > new Date()) {
         return Announcements.findByIdAndUpdate(existingAnnouncement._id, {

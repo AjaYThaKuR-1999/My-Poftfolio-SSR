@@ -17,6 +17,24 @@ const validate = (schema) => (req, res, next) => {
                 }
             }
         }
+        
+        // Clean up empty liveUrls if present
+        if (req.body.liveUrls) {
+            if (Array.isArray(req.body.liveUrls)) {
+                req.body.liveUrls = req.body.liveUrls.filter(item => item && item.link && item.link.trim() !== '');
+                if (req.body.liveUrls.length === 0) {
+                    req.body.liveUrls = [];
+                }
+            } else if (typeof req.body.liveUrls === 'object') {
+                const arrayRepresentation = Object.values(req.body.liveUrls)
+                    .filter(item => item && item.link && item.link.trim() !== '');
+                if (arrayRepresentation.length > 0) {
+                    req.body.liveUrls = arrayRepresentation;
+                } else {
+                    req.body.liveUrls = [];
+                }
+            }
+        }
     }
     const { error } = schema.validate(req.body, { abortEarly: false });
     if (!error) return next();
@@ -28,7 +46,11 @@ const validate = (schema) => (req, res, next) => {
     }
 
     req.flash('error_msg', messages);
-    return res.redirect('back');
+    console.log('[DEBUG] Validation failed. Request headers:', req.headers);
+    console.log('[DEBUG] Referer header value:', req.header('Referer'));
+    const backURL = req.header('Referer') || '/projects';
+    console.log('[DEBUG] Redirecting to backURL:', backURL);
+    return res.redirect(backURL);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -36,74 +58,77 @@ const validate = (schema) => (req, res, next) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const schemas = {
     register: Joi.object({
-        name:           Joi.string().required().min(3).max(50),
-        email:          Joi.string().email().required(),
-        password:       Joi.string().min(6).required(),
-        location:       Joi.string().allow('').optional(),
-        bio:            Joi.string().max(250).allow('').optional(),
-        userType:       Joi.string().valid('developer', 'recruiter', 'project_provider', 'hobbyist', 'other').required(),
-        seeking:        Joi.string().valid('hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other').required(),
+        name: Joi.string().required().min(3).max(50),
+        email: Joi.string().email().required(),
+        password: Joi.string().min(6).required(),
+        location: Joi.string().allow('').optional(),
+        bio: Joi.string().max(250).allow('').optional(),
+        userType: Joi.string().valid('developer', 'recruiter', 'project_provider', 'hobbyist', 'other').required(),
+        seeking: Joi.string().valid('hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other').required(),
         profilePicture: Joi.string().allow('').optional(),
-        github:         Joi.string().uri().allow('').optional(),
-        linkedin:       Joi.string().uri().allow('').optional(),
-        facebook:       Joi.string().uri().allow('').optional(),
-        twitter:        Joi.string().uri().allow('').optional(),
-        instagram:      Joi.string().uri().allow('').optional(),
-        website:        Joi.string().uri().allow('').optional(),
+        github: Joi.string().uri().allow('').optional(),
+        linkedin: Joi.string().uri().allow('').optional(),
+        facebook: Joi.string().uri().allow('').optional(),
+        twitter: Joi.string().uri().allow('').optional(),
+        instagram: Joi.string().uri().allow('').optional(),
+        website: Joi.string().uri().allow('').optional(),
     }),
 
     login: Joi.object({
-        email:    Joi.string().email().required(),
+        email: Joi.string().email().required(),
         password: Joi.string().required(),
     }),
 
     contact: Joi.object({
-        name:    Joi.string().required(),
-        email:   Joi.string().email().required(),
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
         subject: Joi.string().required(),
         message: Joi.string().required().min(10),
     }),
 
     project: Joi.object({
-        title:          Joi.string().required().min(3).max(100),
-        description:    Joi.string().required().min(10),
-        technologies:   Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).required(),
-        githubUrl:      Joi.string().uri().allow('').optional(),
-        liveUrl:        Joi.string().uri().allow('').optional(),
+        title: Joi.string().required().min(3).max(100),
+        description: Joi.string().required().min(10),
+        technologies: Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).required(),
+        githubUrl: Joi.string().uri().allow('').optional(),
+        liveUrl: Joi.string().uri().allow('').optional(),
         gitHubRepoLink: Joi.string().uri().allow('').optional(),
-        liveUrls:       Joi.array().items(Joi.object({
+        liveUrls: Joi.array().items(Joi.object({
             label: Joi.string().allow('').optional(),
-            link:  Joi.string().uri().required()
+            link: Joi.string().uri().required()
         })).optional(),
-        images:         Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).optional(),
-        category:       Joi.string().valid('Web Development', 'Mobile App', 'Web & Mobile App', 'Backend Service & Algorithms').required(),
-        projectType:    Joi.string().valid('personal', 'professional').default('personal').optional(),
-        featured:       Joi.any().optional(),
-        isActive:       Joi.boolean().optional(),
-        ownerId:        Joi.string().optional()
+        logo: Joi.string().allow('').optional(),
+        images: Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).optional(),
+        existingImages: Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).optional(),
+        category: Joi.string().valid('Web Development', 'Mobile App', 'Web & Mobile App', 'Backend Service & Algorithms').required(),
+        projectType: Joi.string().valid('personal', 'professional').default('personal').optional(),
+        featured: Joi.any().optional(),
+        order: Joi.number().integer().allow(null, '').optional(),
+        isActive: Joi.boolean().optional(),
+        ownerId: Joi.string().optional()
     }),
 
     announcement: Joi.object({
         announcement: Joi.string().required(),
-        isActive:     Joi.boolean().optional(),
-        endDate:      Joi.date().optional(),
+        isActive: Joi.boolean().optional(),
+        endDate: Joi.date().optional(),
+        type: Joi.string().valid('community', 'Resume', 'system update').optional()
     }),
 
     updateProfile: Joi.object({
-        name:           Joi.string().min(3).max(50).optional(),
-        email:          Joi.string().email().optional(),
-        password:       Joi.string().min(6).optional(),
-        location:       Joi.string().allow('').optional(),
-        bio:            Joi.string().max(250).allow('').optional(),
-        userType:       Joi.string().valid('developer', 'recruiter', 'project_provider', 'hobbyist', 'other').optional(),
-        seeking:        Joi.string().valid('hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other').optional(),
+        name: Joi.string().min(3).max(50).optional(),
+        email: Joi.string().email().optional(),
+        location: Joi.string().allow('').optional(),
+        bio: Joi.string().max(250).allow('').optional(),
+        userType: Joi.string().valid('developer', 'recruiter', 'project_provider', 'hobbyist', 'other').optional(),
+        seeking: Joi.string().valid('hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other').optional(),
         profilePicture: Joi.string().allow('').optional(),
-        github:         Joi.string().uri().allow('').optional(),
-        linkedin:       Joi.string().uri().allow('').optional(),
-        facebook:       Joi.string().uri().allow('').optional(),
-        twitter:        Joi.string().uri().allow('').optional(),
-        instagram:      Joi.string().uri().allow('').optional(),
-        website:        Joi.string().uri().allow('').optional(),
+        github: Joi.string().uri().allow('').optional(),
+        linkedin: Joi.string().uri().allow('').optional(),
+        facebook: Joi.string().uri().allow('').optional(),
+        twitter: Joi.string().uri().allow('').optional(),
+        instagram: Joi.string().uri().allow('').optional(),
+        website: Joi.string().uri().allow('').optional(),
     }),
 };
 

@@ -15,6 +15,7 @@ const app = express();
 // Security Middleware
 app.use(helmet({
     contentSecurityPolicy: false, // Disable for easier development with external fonts/images
+    referrerPolicy: false,
 }));
 
 // Logger
@@ -72,11 +73,11 @@ app.use((req, res) => {
 
 // Centralized Error Handler
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('Server Error:', err.stack || err);
     const statusCode = err.statusCode || 500;
     res.status(statusCode).render('error', {
         title: 'Error',
-        message: err.message || 'Internal Server Error',
+        message: err.message || err || 'Internal Server Error',
         error: process.env.NODE_ENV === 'development' ? err : {}
     });
 });

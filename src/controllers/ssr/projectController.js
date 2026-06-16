@@ -4,11 +4,18 @@ const Project = require('../../models/Project');
 const mapProjectForView = (project) => {
     if (!project) return null;
     const p = project.toObject ? project.toObject() : { ...project };
+    // Map primary image
     let rawImage = (p.images && p.images[0]) || 'no-photo.jpg';
     if (rawImage && !rawImage.startsWith('http') && !rawImage.startsWith('/')) {
         p.image = `/uploads/${rawImage}`;
     } else {
         p.image = rawImage;
+    }
+    // Map logo
+    if (p.logo && p.logo !== '') {
+        p.logoUrl = p.logo.startsWith('http') || p.logo.startsWith('/') ? p.logo : `/uploads/${p.logo}`;
+    } else {
+        p.logoUrl = '';
     }
     p.githubUrl = p.gitHubRepoLink || '';
     p.liveUrl = (p.liveUrls && p.liveUrls[0] && p.liveUrls[0].link) || '';
@@ -22,7 +29,7 @@ exports.mapProjectForView = mapProjectForView;
 // @access  Public
 exports.getProjects = async (req, res, next) => {
     try {
-        const rawProjects = await Project.find({ isActive: true }).sort('-createdAt');
+        const rawProjects = await Project.find({ isActive: true }).sort('order createdAt');
         const projects = rawProjects.map(p => mapProjectForView(p));
         res.render('projects/index', {
             title: 'Our Projects',
@@ -78,9 +85,15 @@ exports.createProject = async (req, res, next) => {
                 .filter(tech => tech !== '');
         }
 
-        // Process images files uploaded from Multer
-        if (req.files && req.files.length > 0) {
-            req.body.images = req.files.map(file => file.filename);
+        // Process logo file (single image)
+        if (req.files && req.files.logo && req.files.logo.length > 0) {
+            req.body.logo = req.files.logo[0].filename;
+        }
+
+        // Process images files uploaded from Multer (upload.fields)
+        const imageFiles = req.files && req.files.images ? req.files.images : [];
+        if (imageFiles.length > 0) {
+            req.body.images = imageFiles.map(file => file.filename);
         } else if (!req.body.images || (Array.isArray(req.body.images) && req.body.images.length === 0)) {
             req.body.images = ['no-photo.jpg'];
         }
@@ -98,13 +111,20 @@ exports.createProject = async (req, res, next) => {
         // Process featured checkbox
         req.body.featured = req.body.featured === 'on' || req.body.featured === true || req.body.featured === 'true';
 
+        // Process order field
+        if (req.body.order === '' || req.body.order === null || req.body.order === undefined) {
+            req.body.order = 0;
+        } else {
+            req.body.order = Number(req.body.order);
+        }
+
         // Default isActive to true
         req.body.isActive = true;
 
         const project = await Project.create(req.body);
 
         req.flash('success_msg', 'Project created successfully');
-        res.redirect('/dashboard');
+        res.redirect('/projects');
     } catch (err) {
         next(err);
     }
@@ -155,10 +175,25 @@ exports.updateProject = async (req, res, next) => {
                 .filter(tech => tech !== '');
         }
 
-        // Process images files uploaded from Multer (overwrite existing if new files provided)
-        if (req.files && req.files.length > 0) {
-            req.body.images = req.files.map(file => file.filename);
+        // Process logo file (single, optional — only update if new logo uploaded)
+        if (req.files && req.files.logo && req.files.logo.length > 0) {
+            req.body.logo = req.files.logo[0].filename;
         }
+
+        // Process images files (combine kept existingImages and newly uploaded files)
+        let images = [];
+        if (req.body.existingImages) {
+            images = Array.isArray(req.body.existingImages) ? req.body.existingImages : [req.body.existingImages];
+        }
+        const newImageFiles = req.files && req.files.images ? req.files.images : [];
+        if (newImageFiles.length > 0) {
+            const newImages = newImageFiles.map(file => file.filename);
+            images = [...images, ...newImages];
+        }
+        if (images.length === 0) {
+            images = ['no-photo.jpg'];
+        }
+        req.body.images = images;
 
         // Map form githubUrl to gitHubRepoLink
         if (req.body.githubUrl !== undefined) {
@@ -176,6 +211,13 @@ exports.updateProject = async (req, res, next) => {
 
         // Process featured checkbox
         req.body.featured = req.body.featured === 'on' || req.body.featured === true || req.body.featured === 'true';
+
+        // Process order field
+        if (req.body.order === '' || req.body.order === null || req.body.order === undefined) {
+            req.body.order = 0;
+        } else {
+            req.body.order = Number(req.body.order);
+        }
 
         project = await Project.findByIdAndUpdate(req.params.id, req.body, {
             new: true,

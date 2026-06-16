@@ -9,6 +9,11 @@ const announcementsModel = mongoose.model(
         announcement: {
             type: String
         },
+        type: {
+            type: String,
+            enum: ['community', 'Resume', 'system update'],
+            default: 'community'
+        },
         isActive: {
             type: Boolean,
             default: true

@@ -1,0 +1,323 @@
+<section class="pt-32 pb-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb & Back Link -->
+        <div class="mb-6 animate-fade-in">
+            <a href="/dashboard" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider">
+                <i class="fas fa-arrow-left text-[10px]"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 border-b border-slate-800/80 pb-6 animate-fade-in">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight flex items-center gap-3">
+                    <i class="fas fa-users text-primary-500"></i> Registered Members
+                </h1>
+                <p class="text-slate-450 text-sm">Excludes administrator accounts. Currently displaying total registered: <span class="text-white font-bold"><%= totalUsers %></span></p>
+            </div>
+        </div>
+
+        <%- include('../partials/flash') %>
+
+        <!-- Dedicated Members Table (Admin Only) -->
+        <div class="glass-card mb-8 animate-fade-in">
+            <% if (users.length > 0) { %>
+                <div class="overflow-x-auto -mx-6 px-6">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+                                <th class="pb-4 px-6 font-bold text-left">Member</th>
+                                <th class="pb-4 px-6 font-bold text-left">Email Address</th>
+                                <th class="pb-4 px-6 font-bold text-left">Professional Role</th>
+                                <th class="pb-4 px-6 font-bold text-left">Seeking</th>
+                                <th class="pb-4 px-6 font-bold text-left">Registered At</th>
+                                <th class="pb-4 px-6 font-bold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-xs">
+                            <% users.forEach(member => { %>
+                                <tr class="border-b border-slate-900/50 hover:bg-slate-950/35 transition-colors group">
+                                    <td class="py-4 px-6 font-semibold text-white">
+                                        <div class="flex items-center gap-3">
+                                            <% if (member.profilePicture) { %>
+                                                <img src="<%= member.profilePicture %>" alt="<%= member.name %>" class="w-9 h-9 rounded-full object-cover shrink-0">
+                                            <% } else { %>
+                                                <div class="w-9 h-9 rounded-full bg-primary-600/10 text-primary-400 flex items-center justify-center font-bold text-sm shrink-0">
+                                                    <%= member.name.charAt(0).toUpperCase() %>
+                                                </div>
+                                            <% } %>
+                                            <div>
+                                                <div class="font-semibold text-white group-hover:text-primary-450 transition-colors"><%= member.name %></div>
+                                                <div class="text-[10px] text-slate-500"><%= member.location || 'No Location' %></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-350 text-xs font-mono break-all"><%= member.email %></td>
+                                    <td class="py-4 px-6">
+                                        <% 
+                                            let typeText = 'Other';
+                                            let typeColor = 'bg-slate-900 text-slate-400 border border-slate-800';
+                                            if (member.userType === 'developer') { typeText = 'Developer'; typeColor = 'bg-indigo-950/45 border border-indigo-900 text-indigo-400'; }
+                                            else if (member.userType === 'recruiter') { typeText = 'Recruiter'; typeColor = 'bg-pink-950/45 border border-pink-900 text-pink-400'; }
+                                            else if (member.userType === 'project_provider') { typeText = 'Project Provider'; typeColor = 'bg-blue-950/45 border border-blue-900 text-blue-400'; }
+                                            else if (member.userType === 'hobbyist') { typeText = 'Hobbyist'; typeColor = 'bg-emerald-950/45 border border-emerald-900 text-emerald-400'; }
+                                        %>
+                                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider <%= typeColor %>">
+                                            <%= typeText %>
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <%
+                                            let seekText = 'Other';
+                                            let seekColor = 'bg-slate-900 text-slate-400 border border-slate-800';
+                                            if (member.seeking === 'hiring_talent') { seekText = 'Hiring Talent'; seekColor = 'bg-rose-950/45 border border-rose-900 text-rose-400'; }
+                                            else if (member.seeking === 'freelance_work') { seekText = 'Freelance Work'; seekColor = 'bg-emerald-950/45 border border-emerald-900 text-emerald-400'; }
+                                            else if (member.seeking === 'collaboration') { seekText = 'Collaboration'; seekColor = 'bg-sky-950/45 border border-sky-900 text-sky-400'; }
+                                            else if (member.seeking === 'networking') { seekText = 'Networking'; seekColor = 'bg-purple-950/45 border border-purple-900 text-purple-400'; }
+                                            else if (member.seeking === 'exploration') { seekText = 'Exploration'; seekColor = 'bg-amber-950/45 border border-amber-900 text-amber-400'; }
+                                        %>
+                                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider <%= seekColor %>">
+                                            <%= seekText %>
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-400">
+                                        <%= new Date(member.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                    </td>
+                                    <td class="py-4 px-6 text-right">
+                                        <button 
+                                            onclick="openUserDetailsModal(this)"
+                                            data-name="<%= member.name %>"
+                                            data-email="<%= member.email %>"
+                                            data-usertype="<%= member.userType ? member.userType.charAt(0).toUpperCase() + member.userType.slice(1).replace('_', ' ') : 'Not Specified' %>"
+                                            data-seeking="<%= member.seeking ? member.seeking.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Not Specified' %>"
+                                            data-location="<%= member.location || 'Not Specified' %>"
+                                            data-bio="<%= member.bio || 'No bio provided.' %>"
+                                            data-avatar="<%= member.profilePicture || '' %>"
+                                            data-joined="<%= new Date(member.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>"
+                                            data-socials='<%= JSON.stringify(member.socialProfileLinks || []) %>'
+                                            class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-primary-500 hover:text-white rounded-lg text-slate-350 transition-all text-[11px] font-bold cursor-pointer inline-flex items-center gap-1.5">
+                                            <i class="far fa-eye text-primary-500"></i> View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <% if (totalPages > 1) { %>
+                    <div class="flex justify-between items-center mt-8 pt-6 border-t border-slate-850">
+                        <p class="text-slate-500 text-xs">
+                            Showing Page <span class="text-slate-300 font-bold"><%= currentPage %></span> of <span class="text-slate-300 font-bold"><%= totalPages %></span>
+                        </p>
+                        <div class="flex items-center gap-1.5">
+                            <% if (currentPage > 1) { %>
+                                <a href="?page=<%= currentPage - 1 %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:border-primary-500 hover:text-white font-semibold transition-all text-xs flex items-center gap-1">
+                                    <i class="fas fa-chevron-left text-[10px]"></i> Prev
+                                </a>
+                            <% } else { %>
+                                <button disabled class="px-3 py-1.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-600 font-semibold text-xs opacity-50 cursor-not-allowed flex items-center gap-1">
+                                    <i class="fas fa-chevron-left text-[10px]"></i> Prev
+                                </button>
+                            <% } %>
+
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <% if (i === currentPage) { %>
+                                    <span class="px-3 py-1.5 bg-primary-600 rounded-lg text-white font-bold text-xs border border-primary-500">
+                                        <%= i %>
+                                    </span>
+                                <% } else { %>
+                                    <a href="?page=<%= i %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-350 hover:border-primary-500 hover:text-white font-bold transition-all text-xs">
+                                        <%= i %>
+                                    </a>
+                                <% } %>
+                            <% } %>
+
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= currentPage + 1 %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:border-primary-500 hover:text-white font-semibold transition-all text-xs flex items-center gap-1">
+                                    Next <i class="fas fa-chevron-right text-[10px]"></i>
+                                </a>
+                            <% } else { %>
+                                <button disabled class="px-3 py-1.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-600 font-semibold text-xs opacity-50 cursor-not-allowed flex items-center gap-1">
+                                    Next <i class="fas fa-chevron-right text-[10px]"></i>
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <p class="text-slate-500 text-xs italic text-center py-10">No users registered yet.</p>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Modal 3: User Details View (Admin Only) -->
+<div id="userDetailsModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
+    <div class="glass-card w-full max-w-xl bg-slate-900 border-slate-800 flex flex-col p-0 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-fade-in">
+        <!-- Close button (Compact & polished in top-right absolute position) -->
+        <button onclick="closeUserDetailsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white hover:bg-slate-800/60 p-2 rounded-xl transition-all z-10 cursor-pointer text-sm">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Card Header: Profile cover photo and avatar inside layout -->
+        <div class="p-6 border-b border-slate-850 pr-12 shrink-0 bg-gradient-to-r from-primary-950/40 to-slate-950/40 relative">
+            <div class="flex items-center gap-4">
+                <div id="detailAvatarWrapper">
+                    <!-- Replaced by JS -->
+                </div>
+                <div>
+                    <h3 id="detailName" class="text-xl font-bold text-white mb-0.5"><!-- Filled by JS --></h3>
+                    <span id="detailJoined" class="text-[10px] text-slate-400 block"><!-- Filled by JS --></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Body Grid (Optimized space utilization) -->
+        <div class="p-6 space-y-6">
+            <!-- Stacked Key Value Sections (avoids horizontal overflows) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-slate-950/40 p-3 border border-slate-850 rounded-xl">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Email Address</span>
+                    <span id="detailEmail" class="text-white text-xs block break-all font-semibold"><!-- Filled by JS --></span>
+                </div>
+                <div class="bg-slate-950/40 p-3 border border-slate-850 rounded-xl">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Physical Location</span>
+                    <span id="detailLocation" class="text-slate-350 text-xs block font-semibold"><!-- Filled by JS --></span>
+                </div>
+                <div class="bg-slate-950/40 p-3 border border-slate-850 rounded-xl">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Professional Role Type</span>
+                    <span id="detailUserType" class="text-slate-350 text-xs block font-semibold"><!-- Filled by JS --></span>
+                </div>
+                <div class="bg-slate-950/40 p-3 border border-slate-850 rounded-xl">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Seeking Preference</span>
+                    <span id="detailSeeking" class="text-slate-350 text-xs block font-semibold"><!-- Filled by JS --></span>
+                </div>
+            </div>
+
+            <!-- Biography Section -->
+            <div>
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Member Biography</span>
+                <div class="bg-slate-950/50 p-4 border border-slate-850 rounded-xl min-h-[70px]">
+                    <p id="detailBio" class="text-slate-300 text-xs italic leading-relaxed whitespace-pre-line"><!-- Filled by JS --></p>
+                </div>
+            </div>
+
+            <!-- Social Links Grid -->
+            <div>
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-3">Portfolio & Social Links</span>
+                <div id="detailSocials" class="flex flex-wrap gap-2.5">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="p-4 border-t border-slate-850 bg-slate-950/20 flex justify-end shrink-0">
+            <button onclick="closeUserDetailsModal()" class="px-5 py-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-xs text-slate-350 hover:text-white transition-all font-semibold cursor-pointer">
+                Close Profile Details
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ─────────────────────────────────────────────────────────────────────────
+    // User Details Modal
+    // ─────────────────────────────────────────────────────────────────────────
+    const userDetailsModal = document.getElementById('userDetailsModal');
+    const detailName = document.getElementById('detailName');
+    const detailJoined = document.getElementById('detailJoined');
+    const detailEmail = document.getElementById('detailEmail');
+    const detailLocation = document.getElementById('detailLocation');
+    const detailUserType = document.getElementById('detailUserType');
+    const detailSeeking = document.getElementById('detailSeeking');
+    const detailBio = document.getElementById('detailBio');
+    const detailAvatarWrapper = document.getElementById('detailAvatarWrapper');
+    const detailSocials = document.getElementById('detailSocials');
+
+    function openUserDetailsModal(btn) {
+        if (!userDetailsModal) return;
+
+        // Fetch attributes
+        const name = btn.getAttribute('data-name');
+        const email = btn.getAttribute('data-email');
+        const userType = btn.getAttribute('data-usertype');
+        const seeking = btn.getAttribute('data-seeking');
+        const location = btn.getAttribute('data-location');
+        const bio = btn.getAttribute('data-bio');
+        const avatar = btn.getAttribute('data-avatar');
+        const joined = btn.getAttribute('data-joined');
+        
+        let socials = [];
+        try {
+            socials = JSON.parse(btn.getAttribute('data-socials') || '[]');
+        } catch (e) {
+            console.error('Failed to parse socials JSON:', e);
+        }
+
+        // Set static fields
+        detailName.textContent = name;
+        detailJoined.textContent = `Member Since: ${joined}`;
+        detailEmail.textContent = email;
+        detailLocation.innerHTML = `<i class="fas fa-map-marker-alt text-primary-500 mr-1.5"></i>${location}`;
+        detailUserType.textContent = userType;
+        detailSeeking.textContent = seeking;
+        detailBio.textContent = bio;
+
+        // Set Avatar wrapper
+        if (avatar) {
+            detailAvatarWrapper.innerHTML = `<img src="${avatar}" alt="${name}" class="w-16 h-16 rounded-xl object-cover border-2 border-primary-500 shadow-md bg-slate-900">`;
+        } else {
+            const initial = name.charAt(0).toUpperCase();
+            detailAvatarWrapper.innerHTML = `
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-primary-650 to-indigo-600 border-2 border-primary-500/50 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                    ${initial}
+                </div>
+            `;
+        }
+
+        // Set Social profile links
+        const socialPlatforms = {
+            github: { icon: 'fab fa-github', color: 'hover:bg-slate-800 hover:text-white border-slate-850 text-slate-400' },
+            linkedin: { icon: 'fab fa-linkedin-in', color: 'hover:bg-blue-600/20 hover:text-blue-400 border-slate-850 text-slate-400' },
+            facebook: { icon: 'fab fa-facebook-f', color: 'hover:bg-blue-600/20 hover:text-blue-400 border-slate-850 text-slate-400' },
+            twitter: { icon: 'fab fa-twitter', color: 'hover:bg-sky-500/20 hover:text-sky-400 border-slate-850 text-slate-400' },
+            instagram: { icon: 'fab fa-instagram', color: 'hover:bg-pink-600/20 hover:text-pink-400 border-slate-850 text-slate-400' },
+            website: { icon: 'fas fa-globe', color: 'hover:bg-primary-600/20 hover:text-primary-400 border-slate-850 text-slate-400' }
+        };
+
+        if (socials.length > 0) {
+            let html = '';
+            socials.forEach(s => {
+                const config = socialPlatforms[s.label];
+                if (config && s.link) {
+                    html += `
+                        <a href="${s.link}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 border rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${config.color}" title="${s.label}">
+                            <i class="${config.icon}"></i>
+                            <span class="capitalize text-[10px]">${s.label}</span>
+                        </a>
+                    `;
+                }
+            });
+            detailSocials.innerHTML = html || '<p class="text-slate-500 text-xs italic">No social portfolio links configured.</p>';
+        } else {
+            detailSocials.innerHTML = '<p class="text-slate-500 text-xs italic">No social portfolio links configured.</p>';
+        }
+
+        userDetailsModal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeUserDetailsModal() {
+        if (!userDetailsModal) return;
+        userDetailsModal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    // Close Modals on Outer Backdrop Click
+    window.addEventListener('click', (e) => {
+        if (e.target === userDetailsModal) closeUserDetailsModal();
+    });
+</script>

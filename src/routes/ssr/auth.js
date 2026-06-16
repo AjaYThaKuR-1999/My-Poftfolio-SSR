@@ -17,7 +17,7 @@ const handleProfilePictureUpload = (req, res, next) => {
 // ── View pages ────────────────────────────────────────────────────────────────
 router.get('/login', async (req, res, next) => {
     try {
-        const announcements = await Announcement.find({ isActive: true, endDate: { $gte: new Date() } }).sort({ createdAt: -1 });
+        const announcements = await Announcement.find({ isActive: true, type: { $ne: 'Resume' }, endDate: { $gte: new Date() } }).sort({ createdAt: -1 });
         res.render('auth/login', { title: 'Login', announcements });
     } catch (err) {
         next(err);
@@ -26,7 +26,7 @@ router.get('/login', async (req, res, next) => {
 
 router.get('/register', async (req, res, next) => {
     try {
-        const announcements = await Announcement.find({ isActive: true, endDate: { $gte: new Date() } }).sort({ createdAt: -1 });
+        const announcements = await Announcement.find({ isActive: true, type: { $ne: 'Resume' }, endDate: { $gte: new Date() } }).sort({ createdAt: -1 });
         res.render('auth/register', { title: 'Register', announcements });
     } catch (err) {
         next(err);

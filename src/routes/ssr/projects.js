@@ -12,7 +12,7 @@ router.get('/:id', getProject);
 router.get('/:id/edit', protect, authorize('admin'), getEditProjectForm);
 
 // Admin only routes
-router.post('/', protect, authorize('admin'), upload.array('images', 5), validate(schemas.project), createProject);
-router.put('/:id', protect, authorize('admin'), upload.array('images', 5), validate(schemas.project), updateProject);
+router.post('/', protect, authorize('admin'), upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'images', maxCount: 8 }]), validate(schemas.project), createProject);
+router.put('/:id', protect, authorize('admin'), upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'images', maxCount: 8 }]), validate(schemas.project), updateProject);
 
 module.exports = router;

@@ -25,6 +25,10 @@ const ProjectSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a description']
     },
+    logo: {
+        type: String,
+        default: ''
+    },
     images: {
         type: [String]
     },
@@ -43,6 +47,10 @@ const ProjectSchema = new mongoose.Schema({
     featured: {
         type: Boolean,
         default: false
+    },
+    order: {
+        type: Number,
+        default: 0
     },
     isActive: {
         type: Boolean,

@@ -20,16 +20,23 @@ const seedData = async () => {
 
         // 2. Create Admin User
         console.log('No admin user found. Creating admin user...');
-        const adminUser = await User.create({
-            name: 'Ajay Thakur',
-            email: process.env.ADMIN_EMAIL,
-            password: process.env.ADMIN_PASSWORD,
-            role: 'admin'
-        });
+        const adminUser = await User.create(
+            [
+                {
+                    role: 'admin',
+                    name: 'Ajay Thakur',
+                    email: process.env.ADMIN_EMAIL,
+                    password: process.env.ADMIN_PASSWORD,
+                    userType: 'Admin'
+
+                }
+            ],
+            {
+                validateBeforeSave: false
+            }
+        );
 
         console.log('Users created:');
-        console.log(`- Admin: ${adminUser.email}`);
-
         console.log('Database seeding completed successfully!');
     } catch (err) {
         console.error('Seeding error:', err);

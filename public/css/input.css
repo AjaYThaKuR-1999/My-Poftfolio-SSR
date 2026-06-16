@@ -19,16 +19,39 @@
   --color-primary-950: #082f49;
 
   @keyframes fade-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
+
   @keyframes slide-down {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
+
   @keyframes glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); }
-    50% { box-shadow: 0 0 40px rgba(14, 165, 233, 0.4); }
+
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+    }
+
+    50% {
+      box-shadow: 0 0 40px rgba(14, 165, 233, 0.4);
+    }
   }
 
   --animate-fade-in: fade-in 0.8s ease-out forwards;
@@ -47,7 +70,7 @@
   .btn-primary {
     @apply px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-300 shadow-lg shadow-primary-900/20 active:scale-95;
   }
-  
+
   .glass-card {
     @apply bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-xl p-6 shadow-xl;
   }

@@ -6,6 +6,7 @@ router.use('/',          require('./ssr/index'));
 router.use('/auth',      require('./ssr/auth'));
 router.use('/projects',  require('./ssr/projects'));
 router.use('/dashboard', require('./ssr/dashboard'));
+router.use('/users',      require('./ssr/users'));
 
 // ── API Routes ────────────────────────────────────────────────────────────────
 router.use('/api/v1/auth', require('./api/auth'));

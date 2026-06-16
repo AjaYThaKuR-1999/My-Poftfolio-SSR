@@ -36,13 +36,11 @@ const UserSchema = new mongoose.Schema({
     userType: {
         type: String,
         enum: ['developer', 'recruiter', 'project_provider', 'hobbyist', 'other'],
-        default: 'other',
         required: true
     },
     seeking: {
         type: String,
         enum: ['hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other'],
-        default: 'other',
         required: true
     },
     profilePicture: {
@@ -57,6 +55,9 @@ const UserSchema = new mongoose.Schema({
             type: String,
         }
     }],
+    resume: {
+        type: String
+    },
     isActive: {
         type: Boolean,
         default: true
