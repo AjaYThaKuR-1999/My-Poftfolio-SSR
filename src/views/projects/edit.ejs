@@ -269,7 +269,7 @@
         // Dynamic Live Links
         const linksContainer = document.getElementById('live-urls-container');
         const addLinkBtn     = document.getElementById('add-link-btn');
-        let linkIndex = <%= (project.liveUrls && project.liveUrls.length > 0) ? project.liveUrls.length : 1 %>;
+        let linkIndex = parseInt('<%= (project.liveUrls && project.liveUrls.length > 0) ? project.liveUrls.length : 1 %>') || 1;
 
         if (linksContainer) {
             linksContainer.querySelectorAll('.remove-link-btn').forEach(btn => {

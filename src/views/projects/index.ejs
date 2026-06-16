@@ -66,7 +66,7 @@
                          data-type="<%= filterType %>"
                          data-featured="<%= project.featured ? 'true' : 'false' %>"
                          onclick="window.location='/projects/<%= project._id %>'"
-                         style="animation: fade-in 0.55s <%= (i * 0.07).toFixed(2) %>s ease-out both; transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;">
+                         style="--delay: <%= (i * 0.07).toFixed(2) %>s;">
 
                         <!-- ══ CARD VISUAL AREA ══ -->
                         <div class="relative overflow-hidden card-visual" style="height: 210px;">
@@ -247,6 +247,8 @@
 /* ── Card interactions ── */
 .project-card {
     will-change: transform, box-shadow;
+    animation: fade-in 0.55s var(--delay, 0s) ease-out both;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
 }
 .project-card:hover {
     transform: translateY(-5px);
@@ -299,12 +301,14 @@
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
