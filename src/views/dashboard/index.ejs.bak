@@ -510,17 +510,10 @@
                     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                         background: rgba(99, 102, 241, 0.4);
                     }
-                    @keyframes bounce-slow {
-                        0%, 100% { transform: translateY(0); }
-                        50% { transform: translateY(-6px); }
-                    }
-                    .animate-bounce-slow {
-                        animation: bounce-slow 3s infinite ease-in-out;
-                    }
                 </style>
 
                 <!-- Interactive & Unified Connect with Admin Section (Non-Admin Only) -->
-                <div id="get-in-touch" class="relative mb-16 group/section">
+                <div class="relative mb-16 group/section">
                     <!-- Super ambient blurred glows behind the card -->
                     <div
                         class="absolute -inset-1.5 bg-gradient-to-r from-primary-500 via-purple-600 to-indigo-500 rounded-3xl blur opacity-25 group-hover/section:opacity-35 transition duration-1000 group-hover/section:duration-200">
@@ -726,7 +719,247 @@
 
                             <!-- Right Panel: Interactive Messaging Console (col-span-8) -->
                             <div class="lg:col-span-8 flex flex-col justify-between">
-                                <%- include('../partials/chat_box') %>
+                                <% if (typeof user !=='undefined' && user) { %>
+                                    <!-- Interactive WhatsApp Chat Panel (Logged In) -->
+                                    <div
+                                        class="flex flex-col justify-between h-[580px] overflow-hidden bg-slate-950/20">
+                                        <!-- Active Chat Window -->
+                                        <div class="flex flex-col justify-between h-full bg-slate-950/10">
+                                            <!-- Chat Window Header -->
+                                            <div
+                                                class="p-4 bg-slate-950/40 border-b border-slate-800/80 flex items-center justify-between shrink-0 select-none relative z-10">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="relative shrink-0 select-none">
+                                                        <div
+                                                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-600 to-indigo-650 flex items-center justify-center text-white text-[15.5px] md:text-[17px] font-black shadow-inner">
+                                                            A
+                                                        </div>
+                                                        <span
+                                                            class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border border-slate-950 rounded-full shadow-[0_0_10px_#10b981] neon-pulse"></span>
+                                                    </div>
+                                                    <div>
+                                                        <span
+                                                            class="text-[15.5px] md:text-[17px] font-black text-white block">Ajay
+                                                            Thakur</span>
+                                                        <span
+                                                            class="text-[12px] md:text-[13px] text-slate-400 font-medium flex items-center gap-1.5 leading-none mt-0.5">
+                                                            Backend Systems Architect &bull; <span
+                                                                class="text-emerald-400 font-bold">Online</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Glowing Live Connection tag/tile -->
+                                                <span
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] md:text-[12px] font-extrabold uppercase tracking-widest text-emerald-400 select-none shadow-[0_0_12px_rgba(16,185,129,0.1)]">
+                                                    <span
+                                                        class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                                    Live Connection
+                                                </span>
+                                            </div>
+
+                                            <!-- Chat Message Feed -->
+                                            <div
+                                                class="flex-1 overflow-y-auto space-y-4 p-5 bg-slate-950/30 max-h-[380px] custom-scrollbar relative">
+                                                <!-- Message 1 (Left - Admin) -->
+                                                <div class="flex items-start gap-3 max-w-[85%] animate-fade-in">
+                                                    <div
+                                                        class="w-7 h-7 rounded bg-primary-650/20 border border-primary-500/20 flex items-center justify-center text-primary-400 text-xs font-black shrink-0 select-none">
+                                                        A
+                                                    </div>
+                                                    <div
+                                                        class="chat-bubble-admin p-3.5 rounded-2xl rounded-tl-none flex flex-col gap-1 shadow-lg">
+                                                        <p
+                                                            class="text-[14.5px] md:text-[15.5px] text-slate-300 leading-relaxed font-medium">
+                                                            Hey there! Glad to connect with you. If you have any
+                                                            projects, job offers, or support requests, just shoot them
+                                                            here.
+                                                        </p>
+                                                        <span
+                                                            class="text-[10.5px] text-slate-500 text-right leading-none block mt-1">10:14
+                                                            AM</span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Message 2 (Right - User) -->
+                                                <div
+                                                    class="flex items-start justify-end gap-3 max-w-[85%] ml-auto animate-fade-in">
+                                                    <div
+                                                        class="chat-bubble-user p-3.5 rounded-2xl rounded-tr-none flex flex-col gap-1 shadow-lg">
+                                                        <div
+                                                            class="flex items-center gap-1.5 flex-wrap mb-1 select-none">
+                                                            <span
+                                                                class="px-2 py-0.5 bg-primary-950/80 border border-primary-900/60 text-primary-400 rounded-md text-[10.5px] font-extrabold uppercase tracking-widest">
+                                                                Hiring Inquiry
+                                                            </span>
+                                                        </div>
+                                                        <p
+                                                            class="text-[14.5px] md:text-[15.5px] text-slate-200 leading-relaxed font-medium">
+                                                            Awesome portfolio! I selected the Hiring intent pill. Do you
+                                                            have experience with NestJS/GraphQL?
+                                                        </p>
+                                                        <div class="flex items-center justify-end gap-1 mt-1">
+                                                            <span
+                                                                class="text-[10.5px] text-slate-500 leading-none">10:16
+                                                                AM</span>
+                                                            <i
+                                                                class="fas fa-check-double text-[8.5px] text-primary-400"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Message 3 (Left - Admin) -->
+                                                <div class="flex items-start gap-3 max-w-[85%] animate-fade-in">
+                                                    <div
+                                                        class="w-7 h-7 rounded bg-primary-650/20 border border-primary-500/20 flex items-center justify-center text-primary-400 text-xs font-black shrink-0 select-none">
+                                                        A
+                                                    </div>
+                                                    <div
+                                                        class="chat-bubble-admin p-3.5 rounded-2xl rounded-tl-none flex flex-col gap-1 shadow-lg">
+                                                        <p
+                                                            class="text-[14.5px] md:text-[15.5px] text-slate-300 leading-relaxed font-medium">
+                                                            Yes, I build scalable backend architectures using Nest.js,
+                                                            Node, Express, MongoDB, and SQL. Let's discuss your
+                                                            requirements!
+                                                        </p>
+                                                        <span
+                                                            class="text-[10.5px] text-slate-500 text-right leading-none block mt-1">10:18
+                                                            AM</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Message Input Area -->
+                                            <div class="p-4 border-t border-slate-800/80 bg-slate-950/50 shrink-0">
+                                                <form action="/connect" method="POST" class="space-y-3.5">
+                                                    <input type="hidden" name="name" value="<%= user.name %>">
+                                                    <input type="hidden" name="email" value="<%= user.email %>">
+                                                    <input type="hidden" id="console-subject" name="subject" value="">
+
+                                                    <div class="mb-2.5 select-none">
+                                                        <span
+                                                            class="text-[12px] md:text-[13px] text-slate-500 font-mono tracking-widest block uppercase mb-1.5">
+                                                            Message Routing Directive
+                                                            <span
+                                                                class="text-primary-400 animate-pulse font-bold ml-1.5">[Awaiting
+                                                                Selection]</span>
+                                                        </span>
+
+                                                        <!-- Interactive Intent Tiles Grid -->
+                                                        <div class="grid grid-cols-5 gap-1.5 select-none mb-2">
+                                                            <button type="button" id="intent-btn-general"
+                                                                onclick="selectIntent(this, 'General Inquiry', 'Hi Ajay, let\'s chat about...', 'general')"
+                                                                onmouseover="hoverIntent('general')"
+                                                                onmouseout="unhoverIntent()"
+                                                                class="intent-btn group/btn px-1 py-1.5 sm:px-2.5 sm:py-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 duration-300 border-slate-800 bg-slate-950/40 text-slate-400 hover:border-cyan-500/50 hover:bg-cyan-950/20 hover:text-cyan-300">
+                                                                <span class="text-sm sm:text-base">💬</span>
+                                                                <span
+                                                                    class="text-[8.5px] sm:text-[9.5px] font-black tracking-wider uppercase">General</span>
+                                                                <span id="intent-led-general"
+                                                                    class="intent-led w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-700 transition-all duration-300 shrink-0"></span>
+                                                            </button>
+                                                            <button type="button" id="intent-btn-hiring"
+                                                                onclick="selectIntent(this, 'Hiring Inquiry', 'Hi Ajay, we would love to discuss a job opening or hire you for...', 'hiring')"
+                                                                onmouseover="hoverIntent('hiring')"
+                                                                onmouseout="unhoverIntent()"
+                                                                class="intent-btn group/btn px-1 py-1.5 sm:px-2.5 sm:py-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 duration-300 border-slate-800 bg-slate-950/40 text-slate-400 hover:border-emerald-500/50 hover:bg-emerald-950/20 hover:text-emerald-300">
+                                                                <span class="text-sm sm:text-base">💼</span>
+                                                                <span
+                                                                    class="text-[8.5px] sm:text-[9.5px] font-black tracking-wider uppercase">Hiring</span>
+                                                                <span id="intent-led-hiring"
+                                                                    class="intent-led w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-700 transition-all duration-300 shrink-0"></span>
+                                                            </button>
+                                                            <button type="button" id="intent-btn-collab"
+                                                                onclick="selectIntent(this, 'Collaboration Proposal', 'Hi Ajay, I would love to collaborate on a backend project...', 'collab')"
+                                                                onmouseover="hoverIntent('collab')"
+                                                                onmouseout="unhoverIntent()"
+                                                                class="intent-btn group/btn px-1 py-1.5 sm:px-2.5 sm:py-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 duration-300 border-slate-800 bg-slate-950/40 text-slate-400 hover:border-indigo-500/50 hover:bg-indigo-950/20 hover:text-indigo-300">
+                                                                <span class="text-sm sm:text-base">🤝</span>
+                                                                <span
+                                                                    class="text-[8.5px] sm:text-[9.5px] font-black tracking-wider uppercase">Collab</span>
+                                                                <span id="intent-led-collab"
+                                                                    class="intent-led w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-700 transition-all duration-300 shrink-0"></span>
+                                                            </button>
+                                                            <button type="button" id="intent-btn-support"
+                                                                onclick="selectIntent(this, 'Help / Support Request', 'Hi Ajay, I need some assistance with...', 'support')"
+                                                                onmouseover="hoverIntent('support')"
+                                                                onmouseout="unhoverIntent()"
+                                                                class="intent-btn group/btn px-1 py-1.5 sm:px-2.5 sm:py-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 duration-300 border-slate-800 bg-slate-950/40 text-slate-400 hover:border-amber-500/50 hover:bg-amber-950/20 hover:text-amber-300">
+                                                                <span class="text-sm sm:text-base">🛠️</span>
+                                                                <span
+                                                                    class="text-[8.5px] sm:text-[9.5px] font-black tracking-wider uppercase">Support</span>
+                                                                <span id="intent-led-support"
+                                                                    class="intent-led w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-700 transition-all duration-300 shrink-0"></span>
+                                                            </button>
+                                                            <button type="button" id="intent-btn-feedback"
+                                                                onclick="selectIntent(this, 'Feedback / Review', 'Hi Ajay, here is my feedback on your portfolio...', 'feedback')"
+                                                                onmouseover="hoverIntent('feedback')"
+                                                                onmouseout="unhoverIntent()"
+                                                                class="intent-btn group/btn px-1 py-1.5 sm:px-2.5 sm:py-2 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 duration-300 border-slate-800 bg-slate-950/40 text-slate-400 hover:border-pink-500/50 hover:bg-pink-950/20 hover:text-pink-300">
+                                                                <span class="text-sm sm:text-base">💡</span>
+                                                                <span
+                                                                    class="text-[8.5px] sm:text-[9.5px] font-black tracking-wider uppercase">Feedback</span>
+                                                                <span id="intent-led-feedback"
+                                                                    class="intent-led w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-700 transition-all duration-300 shrink-0"></span>
+                                                            </button>
+                                                        </div>
+
+                                                        <!-- Sleek Single-Line Console Status Block -->
+                                                        <div id="intent-hover-desc"
+                                                            class="py-1.5 px-1 text-slate-400 text-[11.5px] sm:text-[12.5px] font-mono flex items-center justify-between border-b border-slate-900/60 mb-2.5 transition-colors duration-200">
+                                                            <div class="flex items-center gap-2 overflow-hidden w-full">
+                                                                <span
+                                                                    class="w-1.5 h-1.5 rounded-full bg-slate-700 shrink-0 transition-all duration-300"
+                                                                    id="intent-desc-dot"></span>
+                                                                <span id="intent-desc-text"
+                                                                    class="truncate text-slate-400">Select route to
+                                                                    unlock secure console terminal...</span>
+                                                                <span
+                                                                    class="w-1 h-3.5 bg-primary-450 shrink-0 animate-pulse ml-0.5"
+                                                                    id="intent-console-cursor"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Chat Textbox Row -->
+                                                    <div class="flex items-center gap-3 relative">
+                                                        <textarea id="console-message" name="message" rows="1" required
+                                                            minlength="10" disabled
+                                                            class="flex-1 bg-slate-950/50 border border-slate-850 focus:border-primary-500 rounded-2xl px-4 py-3 text-[14.5px] md:text-[15.5px] text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all font-medium leading-relaxed max-h-[80px] min-h-[44px] resize-none opacity-50 cursor-not-allowed"
+                                                            placeholder="Please select a message intent above to unlock console..."></textarea>
+                                                        <button type="submit" id="console-send-btn" disabled
+                                                            class="w-12 h-12 bg-gradient-to-r from-primary-500 to-indigo-650 hover:from-primary-600 hover:to-indigo-700 text-white rounded-2xl flex items-center justify-center shrink-0 cursor-pointer send-btn-glow active:scale-95 transition-all opacity-40 cursor-not-allowed pointer-events-none">
+                                                            <i class="fas fa-paper-plane text-base"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                        <!-- Logged Out State Mock/Lock Container (for home screen identicality) -->
+                                        <div
+                                            class="relative rounded-3xl border border-slate-850 bg-slate-950/30 p-10 text-center flex flex-col items-center justify-center min-h-[580px]">
+                                            <!-- Ambient blur locks -->
+                                            <div
+                                                class="absolute inset-0 bg-slate-950/50 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 z-10">
+                                                <div
+                                                    class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 text-xl mb-6 shadow-inner">
+                                                    <i class="fas fa-lock text-slate-400"></i>
+                                                </div>
+                                                <h4 class="text-white font-black text-xl mb-2.5 tracking-tight">Console
+                                                    Securely Locked</h4>
+                                                <p class="text-slate-400 text-xs max-w-sm leading-relaxed mb-8">
+                                                    Please sign in with your community account to unlock the secure chat
+                                                    line and credentials vault.
+                                                </p>
+                                                <a href="/auth/login"
+                                                    class="px-6 py-3 bg-gradient-to-r from-primary-500 to-indigo-650 hover:from-primary-400 hover:to-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-primary-950/40">
+                                                    Sign In & Connect
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <% } %>
                             </div>
                         </div>
                     </div>
@@ -1095,7 +1328,7 @@
                                 };
 
                                 const intentSubjects = {
-                                    general: 'General',
+                                    general: 'General Inquiry',
                                     hiring: 'Hiring Inquiry',
                                     collab: 'Collaboration Proposal',
                                     support: 'Help / Support Request',
@@ -1112,50 +1345,17 @@
 
                                 let selectedIntentType = null;
 
-                                function toggleIntentCurtain() {
-                                    const container = document.getElementById('intent-grid-container');
-                                    const icon = document.getElementById('intent-toggle-icon');
-                                    const toggleBtnText = document.querySelector('#intent-toggle-btn span');
-                                    const pill = document.getElementById('selected-intent-pill');
-                                    const descText = document.getElementById('intent-desc-text');
-                                    const cursor = document.getElementById('intent-console-cursor');
-                                    
-                                    if (container) {
-                                        if (container.classList.contains('max-h-0')) {
-                                            // Curtain Up (reveal grid)
-                                            container.classList.remove('max-h-0', 'opacity-0', 'mb-0');
-                                            container.classList.add('max-h-[150px]', 'opacity-100', 'mb-2');
-                                            if (icon) icon.className = 'fas fa-chevron-down text-[8px]';
-                                            if (toggleBtnText) toggleBtnText.textContent = 'Curtain Down';
-                                            if (pill) pill.classList.add('hidden');
-                                            if (descText) descText.classList.remove('hidden');
-                                            if (cursor) cursor.classList.remove('hidden');
-                                        } else {
-                                            // Curtain Down (hide grid)
-                                            container.classList.remove('max-h-[150px]', 'opacity-100', 'mb-2');
-                                            container.classList.add('max-h-0', 'opacity-0', 'mb-0');
-                                            if (icon) icon.className = 'fas fa-chevron-up text-[8px]';
-                                            if (toggleBtnText) toggleBtnText.textContent = 'Curtain Up';
-                                            if (selectedIntentType) {
-                                                if (pill) pill.classList.remove('hidden');
-                                                if (descText) descText.classList.add('hidden');
-                                                if (cursor) cursor.classList.add('hidden');
-                                            }
-                                        }
-                                    }
-                                }
-
                                 function hoverIntent(type) {
                                     const dot = document.getElementById('intent-desc-dot');
                                     const text = document.getElementById('intent-desc-text');
                                     if (dot && text) {
                                         dot.className = `w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300 ${dotBgClasses[type]}`;
-                                        text.innerHTML = `<span class="font-extrabold uppercase tracking-wider">[ROUTING: ${intentSubjects[type] === 'General Inquiry' ? 'General' : intentSubjects[type]}]</span> ${intentDescriptions[type]}`;
-                                        if (type === 'general') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-cyan-400';
-                                        else if (type === 'hiring') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-emerald-400';
-                                        else if (type === 'collab') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-indigo-400';
-                                        else if (type === 'support') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-amber-400';
-                                        else if (type === 'feedback') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-pink-400';
+                                        text.innerHTML = `<span class="font-extrabold uppercase tracking-wider">[ROUTING: ${intentSubjects[type]}]</span> ${intentDescriptions[type]}`;
+                                        if (type === 'general') text.className = 'truncate text-cyan-400';
+                                        else if (type === 'hiring') text.className = 'truncate text-emerald-400';
+                                        else if (type === 'collab') text.className = 'truncate text-indigo-400';
+                                        else if (type === 'support') text.className = 'truncate text-amber-400';
+                                        else if (type === 'feedback') text.className = 'truncate text-pink-400';
                                     }
 
                                     // Preview indicator LED inside the hovered button
@@ -1168,39 +1368,20 @@
                                 function unhoverIntent() {
                                     const dot = document.getElementById('intent-desc-dot');
                                     const text = document.getElementById('intent-desc-text');
-                                    const container = document.getElementById('intent-grid-container');
-                                    const pill = document.getElementById('selected-intent-pill');
-                                    const cursor = document.getElementById('intent-console-cursor');
-
-                                    const isCollapsed = container ? container.classList.contains('max-h-0') : true;
-
                                     if (dot && text) {
                                         if (selectedIntentType) {
-                                            if (isCollapsed) {
-                                                // If collapsed, hide descriptions completely and only show the pill
-                                                dot.className = 'hidden';
-                                                text.className = 'hidden';
-                                                if (cursor) cursor.classList.add('hidden');
-                                                if (pill) pill.classList.remove('hidden');
-                                            } else {
-                                                // If curtain is up (grid open), show the active selection details
-                                                const type = selectedIntentType;
-                                                dot.className = `w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300 ${dotBgClasses[type]}`;
-                                                text.innerHTML = `<span class="font-extrabold uppercase tracking-wider">[SELECTED: ${intentSubjects[type] === 'General Inquiry' ? 'General' : intentSubjects[type]}]</span> ${intentDescriptions[type]}`;
-                                                if (type === 'general') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-cyan-400';
-                                                else if (type === 'hiring') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-emerald-400';
-                                                else if (type === 'collab') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-indigo-400';
-                                                else if (type === 'support') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-amber-400';
-                                                else if (type === 'feedback') text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-pink-400';
-                                                if (cursor) cursor.classList.remove('hidden');
-                                                if (pill) pill.classList.add('hidden');
-                                            }
+                                            const type = selectedIntentType;
+                                            dot.className = `w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-300 ${dotBgClasses[type]}`;
+                                            text.innerHTML = `<span class="font-extrabold uppercase tracking-wider">[LOCKED: ${intentSubjects[type]}]</span> ${intentDescriptions[type]}`;
+                                            if (type === 'general') text.className = 'truncate text-cyan-400';
+                                            else if (type === 'hiring') text.className = 'truncate text-emerald-400';
+                                            else if (type === 'collab') text.className = 'truncate text-indigo-400';
+                                            else if (type === 'support') text.className = 'truncate text-amber-400';
+                                            else if (type === 'feedback') text.className = 'truncate text-pink-400';
                                         } else {
                                             dot.className = 'w-1.5 h-1.5 rounded-full bg-slate-700 shrink-0 transition-all duration-300';
-                                            text.textContent = 'Select route to unlock secure console terminal...';
-                                            text.className = 'whitespace-normal break-words leading-relaxed block flex-1 text-slate-400';
-                                            if (cursor) cursor.classList.remove('hidden');
-                                            if (pill) pill.classList.add('hidden');
+                                            text.textContent = 'Select message intent route to unlock console...';
+                                            text.className = 'truncate text-slate-400';
                                         }
                                     }
 
@@ -1223,7 +1404,7 @@
                                     // Update hidden subject field
                                     const subjectInput = document.getElementById('console-subject');
                                     if (subjectInput) {
-                                        subjectInput.value = subjectValue === 'General Inquiry' ? 'General' : subjectValue;
+                                        subjectInput.value = subjectValue;
                                     }
 
                                     // Unlock textarea and send button
@@ -1253,47 +1434,6 @@
                                     // Apply active styles to clicked button
                                     const activeStyle = intentStyles[type] ? intentStyles[type].active : '';
                                     btn.className = activeStyle;
-
-                                    // Update selected route pill
-                                    const pill = document.getElementById('selected-intent-pill');
-                                    if (pill) {
-                                        let emoji = '💬';
-                                        let pillColorClass = '';
-                                        if (type === 'general') { emoji = '💬'; pillColorClass = 'text-cyan-400 bg-cyan-950/30 border-cyan-800/50'; }
-                                        else if (type === 'hiring') { emoji = '💼'; pillColorClass = 'text-emerald-400 bg-emerald-950/30 border-emerald-800/50'; }
-                                        else if (type === 'collab') { emoji = '🤝'; pillColorClass = 'text-indigo-400 bg-indigo-950/30 border-indigo-800/50'; }
-                                        else if (type === 'support') { emoji = '🛠️'; pillColorClass = 'text-amber-400 bg-amber-950/30 border-amber-800/50'; }
-                                        else if (type === 'feedback') { emoji = '💡'; pillColorClass = 'text-pink-400 bg-pink-950/30 border-pink-800/50'; }
-                                        
-                                        pill.innerHTML = `${emoji} ${intentSubjects[type] === 'General Inquiry' ? 'General' : intentSubjects[type]}`;
-                                        pill.className = `px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${pillColorClass}`;
-                                        pill.classList.remove('hidden');
-                                    }
-
-                                    // Hide description text and cursor when collapsed
-                                    const descText = document.getElementById('intent-desc-text');
-                                    if (descText) descText.classList.add('hidden');
-                                    const cursor = document.getElementById('intent-console-cursor');
-                                    if (cursor) cursor.classList.add('hidden');
-
-                                    // Auto collapse the intent grid container (curtain down)
-                                    const container = document.getElementById('intent-grid-container');
-                                    if (container) {
-                                        container.classList.remove('max-h-[150px]', 'opacity-100', 'mb-2');
-                                        container.classList.add('max-h-0', 'opacity-0', 'mb-0');
-                                    }
-                                    const icon = document.getElementById('intent-toggle-icon');
-                                    if (icon) {
-                                        icon.className = 'fas fa-chevron-up text-[8px]';
-                                    }
-                                    const toggleBtnText = document.querySelector('#intent-toggle-btn span');
-                                    if (toggleBtnText) {
-                                        toggleBtnText.textContent = 'Curtain Up';
-                                    }
-                                    const toggleBtn = document.getElementById('intent-toggle-btn');
-                                    if (toggleBtn) {
-                                        toggleBtn.classList.remove('hidden');
-                                    }
 
                                     // Trigger update of status text and LEDs
                                     unhoverIntent();

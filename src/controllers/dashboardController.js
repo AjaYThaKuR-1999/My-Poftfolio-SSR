@@ -2,6 +2,7 @@ const path = require('path');
 const Announcement = require('../models/Announcement');
 const Project = require('../models/Project');
 const User = require('../models/User');
+const Message = require('../models/Message');
 
 // @desc    User Dashboard
 // @route   GET /dashboard
@@ -56,12 +57,31 @@ exports.getDashboard = async (req, res, next) => {
             };
         });
 
+        // Fetch dynamic message history for non-admin user
+        let messages = [];
+        if (req.user.role !== 'admin' && adminUser) {
+            // Mark received messages from admin as read
+            await Message.updateMany(
+                { sender: adminUser._id, reciever: req.user.id, isRead: false },
+                { isRead: true }
+            );
+
+            messages = await Message.find({
+                $or: [
+                    { sender: req.user.id, reciever: adminUser._id },
+                    { sender: adminUser._id, reciever: req.user.id }
+                ]
+            }).sort({ createdAt: 1 });
+        }
+
         res.render('dashboard/index', {
             title: 'Dashboard',
             announcements,
             user: req.user,
             adminResume,
-            selectedType
+            adminProfilePicture: adminUser ? adminUser.profilePicture : null,
+            selectedType,
+            messages
         });
     } catch (err) {
         next(err);
@@ -348,6 +368,43 @@ exports.ssrGetUsersList = async (req, res, next) => {
             currentPage,
             totalPages,
             totalUsers,
+            user: req.user
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// @desc    Get User Details and Chat History (Admin Only)
+// @route   GET /users/:id
+// @access  Private/Admin
+exports.ssrGetUserDetails = async (req, res, next) => {
+    try {
+        const targetUser = await User.findById(req.params.id);
+        if (!targetUser) {
+            req.flash('error_msg', 'User not found');
+            return res.redirect('/users');
+        }
+
+        const adminUser = req.user;
+
+        // Mark received messages from target user as read
+        await Message.updateMany(
+            { sender: targetUser._id, reciever: adminUser._id, isRead: false },
+            { isRead: true }
+        );
+
+        const messages = await Message.find({
+            $or: [
+                { sender: targetUser._id, reciever: adminUser._id },
+                { sender: adminUser._id, reciever: targetUser._id }
+            ]
+        }).sort({ createdAt: 1 });
+
+        res.render('users/details', {
+            title: `Member Detail - ${targetUser.name}`,
+            targetUser,
+            messages,
             user: req.user
         });
     } catch (err) {

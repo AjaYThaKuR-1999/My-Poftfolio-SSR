@@ -40,7 +40,7 @@
                         <button type="button" class="filter-btn active-filter" data-filter="all">All <span class="count-badge"><%= totalCount %></span></button>
                         <button type="button" class="filter-btn" data-filter="professional">Work <span class="count-badge"><%= professionalCount %></span></button>
                         <button type="button" class="filter-btn" data-filter="personal">Personal <span class="count-badge"><%= personalCount %></span></button>
-                        <% if (featuredCount > 0) { %>
+                        <% if (featuredCount > 0 && typeof user !== 'undefined' && user && user.role === 'admin') { %>
                         <button type="button" class="filter-btn" data-filter="featured"><i class="fas fa-star text-[8px]"></i> Featured</button>
                         <% } %>
                     </div>

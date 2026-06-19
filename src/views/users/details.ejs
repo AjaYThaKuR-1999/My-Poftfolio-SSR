@@ -1,0 +1,456 @@
+<section class="pt-32 pb-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb & Back Link -->
+        <div class="mb-10 animate-fade-in">
+            <a href="/users" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider">
+                <i class="fas fa-arrow-left text-[10px]"></i> Back to Registered Members
+            </a>
+        </div>
+
+        <%- include('../partials/flash') %>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-fade-in">
+            <!-- Left Column: User Profile Card (col-span-5) -->
+            <div class="lg:col-span-5">
+                <div class="glass-card overflow-hidden flex flex-col justify-between relative h-full">
+                    <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-primary-600/10 via-indigo-650/5 to-transparent border-b border-slate-800/40 pointer-events-none"></div>
+                    
+                    <div class="relative z-10 flex-1 flex flex-col justify-between space-y-6">
+                        <div>
+                            <!-- Avatar & Name Header -->
+                            <div class="flex flex-col sm:flex-row items-center gap-6 mb-6">
+                                <div class="relative shrink-0 p-1.5 rounded-3xl bg-slate-950/80 border border-slate-800/80 shadow-2xl">
+                                    <% if (targetUser.profilePicture) { %>
+                                        <img src="<%= targetUser.profilePicture %>" alt="<%= targetUser.name %>" class="w-[92px] h-[92px] rounded-2xl object-cover bg-slate-950 border border-slate-800/40">
+                                    <% } else { %>
+                                        <div class="w-[92px] h-[92px] rounded-2xl bg-gradient-to-br from-primary-600 to-indigo-650 flex items-center justify-center text-white text-3xl font-black select-none border border-slate-800/40 shadow-inner">
+                                            <%= targetUser.name.charAt(0).toUpperCase() %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="text-center sm:text-left flex-1 min-w-0">
+                                    <span class="inline-flex px-2.5 py-0.5 bg-primary-950/50 border border-primary-900/60 text-primary-400 rounded-md text-[9px] font-bold uppercase tracking-wider mb-2">
+                                        Community Member
+                                    </span>
+                                    <h3 class="text-2xl font-black text-white tracking-tight leading-tight truncate">
+                                        <%= targetUser.name %>
+                                    </h3>
+                                    <span class="text-[10px] text-slate-450 block mt-1">Joined <%= new Date(targetUser.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                                </div>
+                            </div>
+
+                            <!-- Biography Section -->
+                            <% if (targetUser.bio) { %>
+                                <div class="mb-6 relative bg-gradient-to-br from-slate-950/40 to-slate-950/15 border border-slate-850/60 px-5 py-4 rounded-2xl shadow-inner">
+                                    <div class="absolute -top-2.5 left-4 px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-500 rounded text-[9px] uppercase tracking-wider font-bold select-none">
+                                        Biography
+                                    </div>
+                                    <p class="text-slate-300 text-xs italic leading-relaxed font-medium">
+                                        "<%= targetUser.bio %>"
+                                    </p>
+                                </div>
+                            <% } %>
+
+                            <!-- Detail Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 py-5 border-t border-slate-800/60">
+                                <!-- Email -->
+                                <div class="bg-slate-950/30 border border-slate-900/60 rounded-xl p-3 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900/85 border border-slate-800 flex items-center justify-center text-primary-400 shrink-0">
+                                        <i class="fas fa-envelope text-xs"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Email</span>
+                                        <span class="text-white text-[12.5px] block truncate font-medium break-all select-all"><%= targetUser.email %></span>
+                                    </div>
+                                </div>
+                                <!-- Location -->
+                                <div class="bg-slate-950/30 border border-slate-900/60 rounded-xl p-3 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900/85 border border-slate-800 flex items-center justify-center text-primary-400 shrink-0">
+                                        <i class="fas fa-map-marker-alt text-xs"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Location</span>
+                                        <span class="text-slate-300 text-[12.5px] block truncate font-medium"><%= targetUser.location || 'Not Specified' %></span>
+                                    </div>
+                                </div>
+                                <!-- Account Type -->
+                                <div class="bg-slate-950/30 border border-slate-900/60 rounded-xl p-3 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900/85 border border-slate-800 flex items-center justify-center text-primary-400 shrink-0">
+                                        <i class="fas fa-user-tag text-xs"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Account Type</span>
+                                        <span class="text-slate-300 text-[12.5px] block truncate font-medium">
+                                            <%= targetUser.userType ? targetUser.userType.charAt(0).toUpperCase() + targetUser.userType.slice(1).replace('_', ' ') : 'Not Specified' %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Seeking Preference -->
+                                <div class="bg-slate-950/30 border border-slate-900/60 rounded-xl p-3 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900/85 border border-slate-800 flex items-center justify-center text-primary-400 shrink-0">
+                                        <i class="fas fa-search text-xs"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Seeking</span>
+                                        <span class="text-slate-300 text-[12.5px] block truncate font-medium">
+                                            <%= targetUser.seeking ? targetUser.seeking.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Not Specified' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Portfolio & Social Links -->
+                            <div class="pt-4 border-t border-slate-800/60">
+                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-3">Portfolio & Social Links</span>
+                                <div class="flex flex-wrap gap-2.5">
+                                    <% if (targetUser.socialProfileLinks && targetUser.socialProfileLinks.length > 0) { %>
+                                        <% targetUser.socialProfileLinks.forEach(social => { %>
+                                            <% 
+                                                let icon = 'fa-globe';
+                                                let color = 'hover:text-primary-400 hover:border-primary-500/30';
+                                                if (social.label === 'github') { icon = 'fab fa-github'; color = 'hover:text-white hover:border-white/30'; }
+                                                else if (social.label === 'linkedin') { icon = 'fab fa-linkedin'; color = 'hover:text-indigo-400 hover:border-indigo-500/30'; }
+                                                else if (social.label === 'twitter') { icon = 'fab fa-twitter'; color = 'hover:text-sky-400 hover:border-sky-500/30'; }
+                                                else if (social.label === 'instagram') { icon = 'fab fa-instagram'; color = 'hover:text-pink-400 hover:border-pink-500/30'; }
+                                                else if (social.label === 'facebook') { icon = 'fab fa-facebook'; color = 'hover:text-blue-400 hover:border-blue-500/30'; }
+                                            %>
+                                            <a href="<%= social.link %>" target="_blank" rel="noopener noreferrer" 
+                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 border border-slate-850 rounded-lg text-slate-400 text-xs font-semibold transition-all duration-300 <%= color %>">
+                                                <i class="<%= icon %> text-sm"></i>
+                                                <span class="capitalize"><%= social.label %></span>
+                                            </a>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <span class="text-slate-500 text-xs italic">No social portfolio links provided.</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Interactive Messaging Console (col-span-7) -->
+            <div class="lg:col-span-7 flex flex-col justify-between">
+                <div class="glass-card overflow-hidden bg-slate-950/70 border border-slate-800/80 rounded-3xl p-0 shadow-2xl h-full flex flex-col justify-between">
+                    <!-- Chat Header -->
+                    <div class="p-4 bg-slate-950/40 border-b border-slate-800/80 flex items-center justify-between shrink-0 select-none relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="relative shrink-0 select-none">
+                                <% if (targetUser.profilePicture) { %>
+                                    <img src="<%= targetUser.profilePicture %>" alt="<%= targetUser.name %>" class="w-10 h-10 rounded-xl object-cover bg-slate-950 border border-slate-800/40">
+                                <% } else { %>
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-600 to-indigo-650 flex items-center justify-center text-white text-base font-black shadow-inner">
+                                        <%= targetUser.name.charAt(0).toUpperCase() %>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div>
+                                <span class="text-[16px] md:text-[17px] font-black text-white block"><%= targetUser.name %></span>
+                                <span class="text-[12px] md:text-[13px] text-slate-400 font-medium flex items-center gap-1.5 leading-none mt-0.5">
+                                    Direct Console <span id="presence-subtitle-status" class="hidden">&bull; <span class="text-emerald-400 font-bold">Active</span></span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <span id="presence-badge" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 select-none shadow-[0_0_12px_rgba(16,185,129,0.1)]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Live Connection
+                        </span>
+                    </div>
+
+                    <!-- Chat Message Feed -->
+                    <div class="flex-1 overflow-y-auto space-y-4 p-5 bg-slate-950/30 min-h-[380px] max-h-[380px] custom-scrollbar relative">
+                        <% if (messages && messages.length > 0) { %>
+                            <% messages.forEach(msg => { %>
+                                <% if (msg.sender.toString() === user._id.toString()) { %>
+                                    <!-- Admin Message (Right side) -->
+                                    <div class="animate-fade-in">
+                                        <div class="flex items-end justify-end gap-2">
+                                            <div class="chat-bubble-user w-fit max-w-[75%] px-3 py-2 rounded-2xl rounded-tr-none shadow-md">
+                                                <p class="text-[13.5px] text-slate-200 leading-snug font-medium break-words"><%= msg.message %></p>
+                                                <div class="flex items-center justify-end gap-1 mt-0.5">
+                                                    <span class="text-[9.5px] text-slate-500 leading-none"><%= new Date(msg.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) %></span>
+                                                    <i class="fas fa-check-double text-[8px] <%= msg.isRead ? 'text-sky-400' : 'text-slate-500' %>"></i>
+                                                </div>
+                                            </div>
+                                            <div class="relative shrink-0 select-none">
+                                                <% if (user.profilePicture) { %>
+                                                    <img src="<%= user.profilePicture %>" alt="Admin" class="w-6 h-6 rounded-full object-cover">
+                                                <% } else { %>
+                                                    <div class="w-6 h-6 rounded bg-primary-650/20 border border-primary-500/20 flex items-center justify-center text-primary-400 text-xs font-black shrink-0 select-none">A</div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } else { %>
+                                    <!-- Target User Message (Left side) -->
+                                    <div class="animate-fade-in">
+                                        <% if (msg.messageIntent) { %>
+                                            <div class="flex justify-start mb-1 pl-8 select-none">
+                                                <span class="inline-block px-1.5 py-px bg-primary-950/80 border border-primary-900/60 text-primary-400 rounded text-[9px] font-extrabold uppercase tracking-wide"><%= msg.messageIntent === 'General Inquiry' ? 'General' : msg.messageIntent %></span>
+                                            </div>
+                                        <% } %>
+                                        <div class="flex items-end gap-2">
+                                            <div class="relative shrink-0 select-none">
+                                                <% if (targetUser.profilePicture) { %>
+                                                    <img src="<%= targetUser.profilePicture %>" alt="<%= targetUser.name %>" class="w-6 h-6 rounded-full object-cover">
+                                                <% } else { %>
+                                                    <div class="w-6 h-6 rounded bg-primary-650/20 border border-primary-500/20 flex items-center justify-center text-primary-400 text-xs font-black shrink-0 select-none"><%= targetUser.name.charAt(0).toUpperCase() %></div>
+                                                <% } %>
+                                            </div>
+                                            <div class="chat-bubble-admin w-fit max-w-[75%] px-3 py-2 rounded-2xl rounded-tl-none shadow-md">
+                                                <p class="text-[13.5px] text-slate-300 leading-snug font-medium break-words"><%= msg.message %></p>
+                                                <span class="text-[9.5px] text-slate-500 leading-none block mt-0.5"><%= new Date(msg.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="no-messages-placeholder flex flex-col items-center justify-center py-12 px-6 text-center select-none animate-fade-in">
+                                <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-primary-500/20 to-indigo-500/30 border border-primary-500/30 flex items-center justify-center text-white text-2xl shadow-xl shadow-primary-500/10 shrink-0 mb-5 animate-bounce-slow">
+                                    💬
+                                </div>
+                                <h4 class="text-white font-extrabold text-[16px] md:text-[18px] tracking-tight mb-2">
+                                    Initiate Secure Connection
+                                </h4>
+                                <p class="text-slate-400 text-xs md:text-sm max-w-sm leading-relaxed mb-6">
+                                    Send a message to initiate contact and start conversing with <%= targetUser.name %>. As an admin, your messages bypass intent selection and direct console locks.
+                                </p>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Message Input Area -->
+                    <div class="p-4 border-t border-slate-800/80 bg-slate-950/50 shrink-0">
+                        <form id="chat-form" class="space-y-3.5">
+                            <div class="flex items-center gap-3 relative">
+                                <textarea id="console-message" name="message" rows="1" required minlength="1"
+                                    class="flex-1 bg-slate-950/50 border border-slate-850 focus:border-primary-500 rounded-2xl px-4 py-3 text-[14.5px] md:text-[15.5px] text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-primary-500/20 transition-all font-medium leading-relaxed max-h-[80px] min-h-[44px] resize-none"
+                                    placeholder="Type a message to <%= targetUser.name %>..."></textarea>
+                                <button type="submit" id="console-send-btn"
+                                    class="w-12 h-12 bg-gradient-to-r from-primary-500 to-indigo-650 hover:from-primary-600 hover:to-indigo-700 text-white rounded-2xl flex items-center justify-center shrink-0 cursor-pointer send-btn-glow active:scale-95 transition-all">
+                                    <i class="fas fa-paper-plane text-base"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .neon-pulse {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+        animation: pulse-neon 2s infinite;
+    }
+
+    @keyframes pulse-neon {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+
+    .chat-bubble-user {
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(99, 102, 241, 0.05) 100%);
+        border: 1px solid rgba(99, 102, 241, 0.18);
+    }
+
+    .chat-bubble-admin {
+        background: rgba(30, 41, 59, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .send-btn-glow {
+        box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3);
+    }
+
+    .send-btn-glow:hover {
+        box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.45);
+    }
+
+    /* Custom Scrollbar for Chat */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.1);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.25);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(99, 102, 241, 0.4);
+    }
+    @keyframes bounce-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+    }
+    .animate-bounce-slow {
+        animation: bounce-slow 3s infinite ease-in-out;
+    }
+</style>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const socket = io();
+        const chatFeed = document.querySelector('.custom-scrollbar');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('console-message');
+        const placeholder = document.querySelector('.no-messages-placeholder');
+
+        // Auto scroll to bottom
+        if (chatFeed) {
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+
+        // Join the chat room for this user
+        socket.emit('joinRoom', { targetUserId: '<%= targetUser._id %>' });
+
+        // Disconnect gracefully on navigating away
+        window.addEventListener('beforeunload', () => {
+            console.log('[Socket] Disconnecting socket due to page unload');
+            socket.disconnect();
+        });
+
+        // Listen for active presence status
+        socket.on('presenceStatus', (data) => {
+            const subStatus = document.getElementById('presence-subtitle-status');
+            const badge = document.getElementById('presence-badge');
+            console.log('[Presence] Received active presence status:', data.active);
+            if (data.active) {
+                if (subStatus) subStatus.classList.remove('hidden');
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                if (subStatus) subStatus.classList.add('hidden');
+                if (badge) badge.classList.add('hidden');
+            }
+        });
+
+        // Listen for messages read notification
+        socket.on('messagesRead', () => {
+            console.log('[Socket] Received messagesRead notification, turning ticks blue.');
+            document.querySelectorAll('.fa-check-double').forEach(icon => {
+                icon.classList.remove('text-slate-500', 'text-primary-400');
+                icon.classList.add('text-sky-400');
+            });
+        });
+
+        // Handle sending messages
+        if (chatForm) {
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (!messageInput) return;
+                
+                const val = messageInput.value.trim();
+                if (!val) return;
+
+                socket.emit('sendMessage', {
+                    targetUserId: '<%= targetUser._id %>',
+                    message: val
+                });
+
+                messageInput.value = '';
+            });
+
+            // Allow Enter to send message, Shift+Enter to newline
+            if (messageInput) {
+                messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        chatForm.dispatchEvent(new Event('submit'));
+                    }
+                });
+            }
+        }
+
+        // Receive real-time messages
+        socket.on('receiveMessage', (msg) => {
+            if (!chatFeed) return;
+            
+            // Remove empty state placeholder if present
+            if (placeholder) {
+                placeholder.remove();
+            }
+
+            const isMe = msg.sender === '<%= user._id %>';
+            let html = '';
+            const timeStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+            if (isMe) {
+                const adminPic = `<%= user.profilePicture %>`;
+                const adminAvatarHtml = adminPic
+                    ? `<img src="${adminPic}" alt="Admin" class="w-6 h-6 rounded-full object-cover">`
+                    : `<div class="w-6 h-6 rounded bg-primary-650/20 border border-primary-500/20 flex items-center justify-center text-primary-400 text-xs font-black shrink-0 select-none">A</div>`;
+
+                html = `
+                    <div class="animate-fade-in">
+                        <div class="flex items-end justify-end gap-2">
+                            <div class="chat-bubble-user w-fit max-w-[75%] px-3 py-2 rounded-2xl rounded-tr-none shadow-md">
+                                <p class="text-[13.5px] text-slate-200 leading-snug font-medium break-words">${escapeHTML(msg.message)}</p>
+                                <div class="flex items-center justify-end gap-1 mt-0.5">
+                                    <span class="text-[9.5px] text-slate-500 leading-none">${timeStr}</span>
+                                    <i class="fas fa-check-double text-[8px] ${msg.isRead ? 'text-sky-400' : 'text-slate-500'}"></i>
+                                </div>
+                            </div>
+                            <div class="relative shrink-0 select-none">
+                                ${adminAvatarHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let intentBadge = '';
+                if (msg.messageIntent) {
+                    const displayIntent = msg.messageIntent === 'General Inquiry' ? 'General' : msg.messageIntent;
+                    intentBadge = `
+                        <div class="flex justify-start mb-1 pl-8 select-none">
+                            <span class="inline-block px-1.5 py-px bg-primary-950/80 border border-primary-900/60 text-primary-400 rounded text-[9px] font-extrabold uppercase tracking-wide">${escapeHTML(displayIntent)}</span>
+                        </div>
+                    `;
+                }
+                const avatarHtml = `<%= targetUser.profilePicture %>` 
+                    ? `<img src="<%= targetUser.profilePicture %>" alt="<%= targetUser.name %>" class="w-6 h-6 rounded-full object-cover">`
+                    : `<div class="w-6 h-6 rounded bg-primary-650/20 border border-primary-500/20 flex items-center justify-center text-primary-400 text-xs font-black shrink-0 select-none"><%= targetUser.name.charAt(0).toUpperCase() %></div>`;
+
+                html = `
+                    <div class="animate-fade-in">
+                        ${intentBadge}
+                        <div class="flex items-end gap-2">
+                            <div class="relative shrink-0 select-none">
+                                ${avatarHtml}
+                            </div>
+                            <div class="chat-bubble-admin w-fit max-w-[75%] px-3 py-2 rounded-2xl rounded-tl-none shadow-md">
+                                <p class="text-[13.5px] text-slate-300 leading-snug font-medium break-words">${escapeHTML(msg.message)}</p>
+                                <span class="text-[9.5px] text-slate-500 leading-none block mt-0.5">${timeStr}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            chatFeed.insertAdjacentHTML('beforeend', html);
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        });
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    });
+</script>

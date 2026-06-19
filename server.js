@@ -1,11 +1,19 @@
 const app = require('./app');
+const http = require('http');
 const connectDB = require('./config/db');
+const { initSocket } = require('./src/utils/socket');
 
 const PORT = process.env.PORT || 3000;
 
+// Create HTTP Server
+const server = http.createServer(app);
+
+// Initialize Socket.io
+initSocket(server);
+
 // Connect to Database
 connectDB().then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     });
 });
@@ -13,6 +21,5 @@ connectDB().then(() => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
     console.log(`Error: ${err.message}`);
-    // Close server & exit process
-    // server.close(() => process.exit(1));
 });
+
