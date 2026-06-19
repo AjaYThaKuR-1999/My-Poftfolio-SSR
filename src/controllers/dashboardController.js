@@ -345,22 +345,84 @@ exports.ssrDownloadResume = async (req, res, next) => {
 // @access  Private/Admin
 exports.ssrGetUsersList = async (req, res, next) => {
     try {
+        const userType = req.query.userType || '';
         const currentPage = parseInt(req.query.page, 10) || 1;
-        if (currentPage < 1) return res.redirect('/users?page=1');
-        const limit = 20;
-        const skip = (currentPage - 1) * limit;
+        const sortBy = req.query.sortBy || 'createdAt';
+        const sortOrder = req.query.sortOrder || 'desc';
+        
+        const adminUser = await User.findOne({ role: 'admin' });
+        const adminId = adminUser ? adminUser._id : null;
 
-        const totalUsers = await User.countDocuments({ role: { $ne: 'admin' } });
-        const totalPages = Math.ceil(totalUsers / limit) || 1;
-
-        if (currentPage > totalPages && totalPages > 0) {
-            return res.redirect(`/users?page=${totalPages}`);
+        const matchStage = { role: { $ne: 'admin' } };
+        if (userType) {
+            matchStage.userType = userType;
         }
 
-        const users = await User.find({ role: { $ne: 'admin' } })
-            .sort('-createdAt')
-            .skip(skip)
-            .limit(limit);
+        const totalUsers = await User.countDocuments(matchStage);
+        const limit = 20;
+        const totalPages = Math.ceil(totalUsers / limit) || 1;
+
+        const getRedirectUrl = (page) => {
+            let url = `/users?page=${page}`;
+            if (userType) url += `&userType=${userType}`;
+            if (sortBy) url += `&sortBy=${sortBy}`;
+            if (sortOrder) url += `&sortOrder=${sortOrder}`;
+            return url;
+        };
+
+        if (currentPage < 1) {
+            return res.redirect(getRedirectUrl(1));
+        }
+
+        if (currentPage > totalPages && totalPages > 0) {
+            return res.redirect(getRedirectUrl(totalPages));
+        }
+
+        const skip = (currentPage - 1) * limit;
+
+        const sortStage = {};
+        if (sortBy === 'unseenCount') {
+            sortStage.unseenCount = sortOrder === 'asc' ? 1 : -1;
+            sortStage.createdAt = sortOrder === 'asc' ? 1 : -1;
+        } else {
+            sortStage.createdAt = sortOrder === 'asc' ? 1 : -1;
+        }
+
+        const users = await User.aggregate([
+            {
+                $match: matchStage
+            },
+            {
+                $lookup: {
+                    from: 'messages',
+                    let: { userId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$sender', '$$userId'] },
+                                        { $eq: ['$reciever', adminId] },
+                                        { $eq: ['$isRead', false] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'unseenMessages'
+                }
+            },
+            {
+                $addFields: {
+                    unseenCount: { $size: '$unseenMessages' }
+                }
+            },
+            {
+                $sort: sortStage
+            },
+            { $skip: skip },
+            { $limit: limit }
+        ]);
 
         res.render('users/index', {
             title: 'Registered Members',
@@ -368,6 +430,9 @@ exports.ssrGetUsersList = async (req, res, next) => {
             currentPage,
             totalPages,
             totalUsers,
+            selectedUserType: userType,
+            sortBy,
+            sortOrder,
             user: req.user
         });
     } catch (err) {

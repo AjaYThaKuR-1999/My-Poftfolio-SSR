@@ -165,7 +165,60 @@ const apiLogout = (req, res) => {
 // Get all registered users (excluding admins) — API (Admin only)
 const apiGetUsers = async (req, res, next) => {
     try {
-        const users = await User.find({ role: { $ne: 'admin' } });
+        const userType = req.query.userType || '';
+        const sortBy = req.query.sortBy || 'createdAt';
+        const sortOrder = req.query.sortOrder || 'desc';
+
+        const adminUser = await User.findOne({ role: 'admin' });
+        const adminId = adminUser ? adminUser._id : null;
+
+        const matchStage = { role: { $ne: 'admin' } };
+        if (userType) {
+            matchStage.userType = userType;
+        }
+
+        const sortStage = {};
+        if (sortBy === 'unseenCount') {
+            sortStage.unseenCount = sortOrder === 'asc' ? 1 : -1;
+            sortStage.createdAt = sortOrder === 'asc' ? 1 : -1;
+        } else {
+            sortStage.createdAt = sortOrder === 'asc' ? 1 : -1;
+        }
+
+        const users = await User.aggregate([
+            {
+                $match: matchStage
+            },
+            {
+                $lookup: {
+                    from: 'messages',
+                    let: { userId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$sender', '$$userId'] },
+                                        { $eq: ['$reciever', adminId] },
+                                        { $eq: ['$isRead', false] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'unseenMessages'
+                }
+            },
+            {
+                $addFields: {
+                    unseenCount: { $size: '$unseenMessages' }
+                }
+            },
+            {
+                $sort: sortStage
+            }
+        ]);
+
         res.status(200).json({ success: true, count: users.length, data: users });
     } catch (err) {
         next(err);

@@ -1,19 +1,40 @@
-<section class="pt-32 pb-20">
+<section class="pt-28 pb-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Breadcrumb & Back Link -->
-        <div class="mb-6 animate-fade-in">
-            <a href="/dashboard" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider">
-                <i class="fas fa-arrow-left text-[10px]"></i> Back to Dashboard
-            </a>
-        </div>
 
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 border-b border-slate-800/80 pb-6 animate-fade-in">
             <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-950/70 border border-primary-800/50 rounded-full text-primary-400 text-[10px] font-bold uppercase tracking-widest mb-4 select-none">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse"></span>
+                    Community Directory
+                </div>
                 <h1 class="text-3xl font-extrabold text-white mb-2 tracking-tight flex items-center gap-3">
                     <i class="fas fa-users text-primary-500"></i> Registered Members
                 </h1>
-                <p class="text-slate-450 text-sm">Excludes administrator accounts. Currently displaying total registered: <span class="text-white font-bold"><%= totalUsers %></span></p>
+            </div>
+            
+            <!-- Professional Role Filter and Total Count -->
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+                <!-- Total count badge -->
+                <div class="flex items-center gap-2.5 px-4 py-2 bg-gradient-to-r from-primary-950/60 to-slate-900/60 border border-primary-900/30 rounded-xl text-primary-400 text-xs font-bold shadow-md shadow-primary-950/20 select-none">
+                    <i class="fas fa-users text-xs text-primary-500 animate-pulse"></i>
+                    <span>Total Members: <strong class="text-white font-black text-sm ml-1"><%= totalUsers %></strong></span>
+                </div>
+
+                <!-- Custom Styled Role Filter Select -->
+                <div class="relative flex items-center bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-primary-500/40 rounded-xl px-4 py-2 transition-all duration-300 group shadow-lg shrink-0">
+                    <i class="fas fa-user-tag text-slate-500 group-hover:text-primary-400 transition-colors text-xs mr-2.5 select-none"></i>
+                    <select id="role-filter" onchange="filterUsersByRole(this.value)" 
+                        class="bg-transparent border-none text-xs text-slate-200 font-extrabold focus:outline-none cursor-pointer pr-6 appearance-none select-none">
+                        <option value="" <%= !selectedUserType ? 'selected' : '' %> class="bg-slate-950 text-slate-300">All Roles</option>
+                        <option value="developer" <%= selectedUserType === 'developer' ? 'selected' : '' %> class="bg-slate-950 text-slate-350">Developer</option>
+                        <option value="recruiter" <%= selectedUserType === 'recruiter' ? 'selected' : '' %> class="bg-slate-950 text-slate-350">Recruiter</option>
+                        <option value="project_provider" <%= selectedUserType === 'project_provider' ? 'selected' : '' %> class="bg-slate-950 text-slate-350">Project Provider</option>
+                        <option value="hobbyist" <%= selectedUserType === 'hobbyist' ? 'selected' : '' %> class="bg-slate-950 text-slate-350">Hobbyist</option>
+                        <option value="other" <%= selectedUserType === 'other' ? 'selected' : '' %> class="bg-slate-950 text-slate-350">Other</option>
+                    </select>
+                    <i class="fas fa-chevron-down text-[8px] text-slate-500 group-hover:text-primary-400 transition-colors absolute right-4 pointer-events-none"></i>
+                </div>
             </div>
         </div>
 
@@ -25,24 +46,65 @@
                 <div class="overflow-x-auto -mx-6 px-6">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+                            <tr class="border-b border-slate-800 text-slate-500 text-[10px] uppercase font-bold tracking-wider select-none">
                                 <th class="pb-4 px-6 font-bold text-left">Member</th>
                                 <th class="pb-4 px-6 font-bold text-left">Email Address</th>
                                 <th class="pb-4 px-6 font-bold text-left">Professional Role</th>
                                 <th class="pb-4 px-6 font-bold text-left">Seeking</th>
-                                <th class="pb-4 px-6 font-bold text-left">Registered At</th>
+                                <th class="pb-4 px-6 font-bold text-center">
+                                    <% 
+                                        let nextUnseenOrder = 'desc';
+                                        if (sortBy === 'unseenCount') {
+                                            nextUnseenOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+                                        }
+                                    %>
+                                    <a href="?page=1<%= selectedUserType ? '&userType=' + selectedUserType : '' %>&sortBy=unseenCount&sortOrder=<%= nextUnseenOrder %>" 
+                                       class="inline-flex items-center gap-1.5 hover:text-white transition-colors justify-center w-full group">
+                                        <span>Unseen Messages</span>
+                                        <span class="inline-flex flex-col text-[7px] leading-none shrink-0 <%= sortBy === 'unseenCount' ? 'text-primary-400' : 'text-slate-650 group-hover:text-slate-400 transition-colors' %>">
+                                            <% if (sortBy === 'unseenCount' && sortOrder === 'asc') { %>
+                                                <i class="fas fa-caret-up text-[9px]"></i>
+                                            <% } else if (sortBy === 'unseenCount' && sortOrder === 'desc') { %>
+                                                <i class="fas fa-caret-down text-[9px]"></i>
+                                            <% } else { %>
+                                                <i class="fas fa-sort text-[9px]"></i>
+                                            <% } %>
+                                        </span>
+                                    </a>
+                                </th>
+                                <th class="pb-4 px-6 font-bold text-left">
+                                    <% 
+                                        let nextCreatedOrder = 'desc';
+                                        if (sortBy === 'createdAt') {
+                                            nextCreatedOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+                                        }
+                                    %>
+                                    <a href="?page=1<%= selectedUserType ? '&userType=' + selectedUserType : '' %>&sortBy=createdAt&sortOrder=<%= nextCreatedOrder %>" 
+                                       class="inline-flex items-center gap-1.5 hover:text-white transition-colors group">
+                                        <span>Registered At</span>
+                                        <span class="inline-flex flex-col text-[7px] leading-none shrink-0 <%= sortBy === 'createdAt' ? 'text-primary-400' : 'text-slate-650 group-hover:text-slate-400 transition-colors' %>">
+                                            <% if (sortBy === 'createdAt' && sortOrder === 'asc') { %>
+                                                <i class="fas fa-caret-up text-[9px]"></i>
+                                            <% } else if (sortBy === 'createdAt' && sortOrder === 'desc') { %>
+                                                <i class="fas fa-caret-down text-[9px]"></i>
+                                            <% } else { %>
+                                                <i class="fas fa-sort text-[9px]"></i>
+                                            <% } %>
+                                        </span>
+                                    </a>
+                                </th>
                                 <th class="pb-4 px-6 font-bold text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-xs">
                             <% users.forEach(member => { %>
-                                <tr class="border-b border-slate-900/50 hover:bg-slate-950/35 transition-colors group">
+                                <tr class="border-b border-slate-950/60 hover:bg-slate-900/30 transition-all duration-350 group">
                                     <td class="py-4 px-6 font-semibold text-white">
                                         <div class="flex items-center gap-3">
                                             <% if (member.profilePicture) { %>
-                                                <img src="<%= member.profilePicture %>" alt="<%= member.name %>" class="w-9 h-9 rounded-full object-cover shrink-0">
+                                                <img src="<%= member.profilePicture %>" alt="<%= member.name %>" class="w-9 h-9 rounded-xl object-cover shrink-0 border border-slate-800/80 group-hover:border-primary-500/30 transition-all duration-300">
                                             <% } else { %>
-                                                <div class="w-9 h-9 rounded-full bg-primary-600/10 text-primary-400 flex items-center justify-center font-bold text-sm shrink-0">
+                                                <div class="w-9 h-9 rounded-xl bg-primary-600/10 border border-slate-850/60 text-primary-400 flex items-center justify-center font-bold text-sm shrink-0 group-hover:border-primary-500/30 transition-all duration-300">
                                                     <%= member.name.charAt(0).toUpperCase() %>
                                                 </div>
                                             <% } %>
@@ -80,6 +142,15 @@
                                             <%= seekText %>
                                         </span>
                                     </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <% if (member.unseenCount > 0) { %>
+                                            <span class="inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-white bg-rose-600 rounded-full shadow-[0_0_12px_rgba(225,29,72,0.4)] animate-pulse">
+                                                <%= member.unseenCount %> new
+                                            </span>
+                                        <% } else { %>
+                                            <span class="text-slate-650 text-xs font-semibold">-</span>
+                                        <% } %>
+                                    </td>
                                     <td class="py-4 px-6 text-slate-400">
                                         <%= new Date(member.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
                                     </td>
@@ -103,7 +174,7 @@
                         </p>
                         <div class="flex items-center gap-1.5">
                             <% if (currentPage > 1) { %>
-                                <a href="?page=<%= currentPage - 1 %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:border-primary-500 hover:text-white font-semibold transition-all text-xs flex items-center gap-1">
+                                <a href="?page=<%= currentPage - 1 %><%= selectedUserType ? '&userType=' + selectedUserType : '' %>&sortBy=<%= sortBy %>&sortOrder=<%= sortOrder %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:border-primary-500 hover:text-white font-semibold transition-all text-xs flex items-center gap-1">
                                     <i class="fas fa-chevron-left text-[10px]"></i> Prev
                                 </a>
                             <% } else { %>
@@ -118,14 +189,14 @@
                                         <%= i %>
                                     </span>
                                 <% } else { %>
-                                    <a href="?page=<%= i %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-350 hover:border-primary-500 hover:text-white font-bold transition-all text-xs">
+                                    <a href="?page=<%= i %><%= selectedUserType ? '&userType=' + selectedUserType : '' %>&sortBy=<%= sortBy %>&sortOrder=<%= sortOrder %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-350 hover:border-primary-500 hover:text-white font-bold transition-all text-xs">
                                         <%= i %>
                                     </a>
                                 <% } %>
                             <% } %>
 
                             <% if (currentPage < totalPages) { %>
-                                <a href="?page=<%= currentPage + 1 %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:border-primary-500 hover:text-white font-semibold transition-all text-xs flex items-center gap-1">
+                                <a href="?page=<%= currentPage + 1 %><%= selectedUserType ? '&userType=' + selectedUserType : '' %>&sortBy=<%= sortBy %>&sortOrder=<%= sortOrder %>" class="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:border-primary-500 hover:text-white font-semibold transition-all text-xs flex items-center gap-1">
                                     Next <i class="fas fa-chevron-right text-[10px]"></i>
                                 </a>
                             <% } else { %>
@@ -142,5 +213,19 @@
         </div>
     </div>
 </section>
+
+<script>
+function filterUsersByRole(role) {
+    let url = '/users?page=1';
+    if (role) {
+        url += '&userType=' + role;
+    }
+    const sortBy = '<%= sortBy %>';
+    const sortOrder = '<%= sortOrder %>';
+    if (sortBy) url += '&sortBy=' + sortBy;
+    if (sortOrder) url += '&sortOrder=' + sortOrder;
+    window.location.href = url;
+}
+</script>
 
 
