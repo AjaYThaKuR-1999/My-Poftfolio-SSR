@@ -1,245 +1,122 @@
-# API Endpoints and Payloads Reference
+# Hi, I'm Ajay! 👋
 
-This project is a Backend Portfolio application built using Node.js, Express, and MongoDB. It supports both server-side rendered (SSR) views and REST API endpoints.
+Welcome to my **Professional Backend Software Engineer Portfolio**. 
 
-All API routes are prefixed with `/api/v1`.
-
-- **Base URL:** `http://localhost:3000`
+This application is designed as a high-performance, real-time backend showroom. It highlights my technical journey, showcases my featured projects, and features an interactive secure messaging console for collaborators, recruiters, and clients to connect with me in real time.
 
 ---
 
-## 1. Authentication & User Module (`/api/v1/auth`)
+## 🚀 Key Features
 
-### 1.1. Register User
-* **Method:** `POST`
-* **URL:** `http://localhost:3000/api/v1/auth/register`
-* **Access:** Public
-* **Headers:** 
-  * `Content-Type: multipart/form-data` (or `application/json`)
-  * `Accept: application/json`
-* **Request Body (form-data / JSON):**
-  ```json
-  {
-    "name": "John Doe",           // String (required, min: 3, max: 50)
-    "email": "john@example.com",  // String (required, valid email)
-    "password": "securepassword", // String (required, min: 6)
-    "location": "San Francisco, CA", // String (optional)
-    "bio": "Open Source Contributor | Fullstack Developer", // String (optional, max 250 chars)
-    "userType": "developer",      // String enum (required, one of: 'developer', 'recruiter', 'project_provider', 'hobbyist', 'other')
-    "seeking": "collaboration",   // String enum (required, one of: 'hiring_talent', 'freelance_work', 'collaboration', 'networking', 'exploration', 'other')
-    "profilePicture": (File upload or optional image relative path/URL string),
-    "github": "https://github.com/johndoe",    // String (optional, URL)
-    "linkedin": "https://linkedin.com/in/johndoe", // String (optional, URL)
-    "facebook": "https://facebook.com/johndoe", // String (optional, URL)
-    "twitter": "https://twitter.com/johndoe", // String (optional, URL)
-    "instagram": "https://instagram.com/johndoe", // String (optional, URL)
-    "website": "https://example.com" // String (optional, URL)
-  }
+* **Dual-Mode Architecture (SSR & REST API):** 
+  * Serves premium, fully responsive Server-Side Rendered (SSR) views powered by **EJS** and **Tailwind CSS**.
+  * Exposes a fully structured, secure REST API under the `/api/v1` prefix for cross-platform data access.
+* **WebSocket-Powered Live Console:**
+  * Authenticated users can start a direct chat session with me.
+  * Real-time notifications, presence detection, and read-receipt ticks powered by **Socket.io**.
+* **Comprehensive Admin Control Center:**
+  * Complete dashboard to manage projects (create, read, update, delete, reorder).
+  * System-wide Announcement engine categorized by updates, milestone events, and system statuses.
+  * User Directory with dynamic chat feeds and aggregate unread message counters.
+* **Telemetry & Tracking:**
+  * Real-time telemetry log records resume download activity and visitor statistics.
+  * Automated activity tracking logging active sessions, visit count, and page requests.
+
+---
+
+## 🛠️ Technology Stack
+
+* **Server Core:** [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)
+* **Templating Engine:** [EJS (Embedded JavaScript)](https://ejs.co/) for dynamic Server-Side Rendering (SSR) combined with `express-ejs-layouts` for modular, reusable visual layouts
+* **Database & Modeling:** [MongoDB](https://www.mongodb.com/), [Mongoose ORM](https://mongoosejs.com/)
+* **Real-time Engine:** [Socket.io](https://socket.io/) (WebSockets)
+* **Session & Auth:** HTTP-Only Cookie Session storage, JWT (JSON Web Tokens) & Bcrypt password hashing
+* **Security & Validation:** [Joi](https://joi.dev/) validation schemas & [Helmet.js](https://helmetjs.github.io/) security headers
+* **Styling & UI:** Custom Tailwind CSS styling configuration for premium aesthetics
+
+---
+
+## 📂 Project Structure
+
+```bash
+├── config/                  # Database connections and seeding scripts
+├── public/                  # Static assets (compiled CSS, client JavaScript, uploads)
+├── src/
+│   ├── controllers/         # Controller layers separating SSR actions
+│   │   ├── ssr/             # SSR logic (Dashboard, User, Project Controllers)
+│   │   └── api/             # REST API payload logic
+│   ├── middleware/          # JWT protection, analytics, and schema validation
+│   ├── models/              # Mongoose DB Schemas (User, Project, Message, etc.)
+│   ├── routes/              # Centralized route mounting
+│   │   ├── ssr/             # Server-side views routes
+│   │   └── api/             # REST endpoints (v1)
+│   ├── utils/               # Mailer scripts, Socket handlers, Multer storage
+│   └── views/               # EJS template engine pages and partials
+├── app.js                   # Express application setup
+└── server.js                # Server listener, DB init, and Graceful Shutdown configuration
+```
+
+---
+
+## ⚡ Getting Started
+
+### 1. Prerequisites
+Ensure you have Node.js (version 18+) and MongoDB installed locally or access to a MongoDB Atlas cluster.
+
+### 2. Environment Configuration
+Create a `.env` file in the root directory and configure the following variables:
+```env
+PORT=3000
+NODE_ENV=development
+MONGO_URI=your_mongodb_connection_uri
+JWT_SECRET=your_jwt_signing_secret
+SESSION_SECRET=your_session_store_secret
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=your_secure_admin_password
+```
+
+### 3. Installation
+Install dependencies:
+```bash
+npm install
+```
+
+### 4. Running the App
+* **Development Mode (with auto-reload):**
+  ```bash
+  npm run dev
+  ```
+* **Production Mode:**
+  ```bash
+  npm start
   ```
 
 ---
 
-### 1.2. Login User
-* **Method:** `POST`
-* **URL:** `http://localhost:3000/api/v1/auth/login`
-* **Access:** Public
-* **Headers:** 
-  * `Content-Type: application/json`
-  * `Accept: application/json`
-* **Request Body (JSON):**
-  ```json
-  {
-    "email": "john@example.com",  // String (required, valid email)
-    "password": "securepassword"  // String (required)
-  }
-  ```
+## 📖 Routing Reference (SSR vs. API)
+
+### Server-Side Rendered Views (SSR)
+
+* `GET /` — Homepage showcasing featured projects and direct contact options.
+* `GET /auth/login` — Sign in to the portfolio console.
+* `GET /auth/register` — Create a recruiter/visitor profile.
+* `GET /dashboard` — Interactive chat dashboard (includes profile updates, resumes, and announcements for admins).
+* `GET /users` — Admin portal member directory.
+
+### REST API endpoints (`/api/v1`)
+
+All REST endpoints require an `Authorization: Bearer <JWT_TOKEN>` header for private routes.
+
+* `POST /api/v1/auth/register` — Standard registration payload.
+* `POST /api/v1/auth/login` — Retrieve JWT payload.
+* `GET /api/v1/projects` — Fetch all projects.
+* `POST /api/v1/projects` — Add a new project (Admin Only).
+* `GET /api/v1/announcements` — List active notifications.
 
 ---
 
-### 1.3. Get Current User Profile
-* **Method:** `GET`
-* **URL:** `http://localhost:3000/api/v1/auth/me`
-* **Access:** Private (Registered user / Admin)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-* **Request Body:** None
+## 🔒 Security & Best Practices
 
----
-
-### 1.4. Logout User
-* **Method:** `POST`
-* **URL:** `http://localhost:3000/api/v1/auth/logout`
-* **Access:** Private (Registered user / Admin)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-* **Request Body:** None
-
----
-
-### 1.5. List Registered Users (Exclude Admins)
-* **Method:** `GET`
-* **URL:** `http://localhost:3000/api/v1/auth/users`
-* **Access:** Private (Admin only)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-* **Request Body:** None
-
----
-
-### 1.6. Update Current User Profile
-* **Method:** `PUT`
-* **URL:** `http://localhost:3000/api/v1/auth/me`
-* **Access:** Private (Registered user / Admin)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Content-Type: multipart/form-data` (or `application/json`)
-  * `Accept: application/json`
-* **Request Body (form-data / JSON - all fields optional):**
-  ```json
-  {
-    "name": "Jane Doe",
-    "email": "jane@example.com",
-    "password": "newsecurepassword",
-    "location": "Oakland, CA",
-    "bio": "Staff Tech Recruiter at Netflix",
-    "userType": "recruiter",
-    "seeking": "hiring_talent",
-    "profilePicture": (File upload or optional image relative path/URL string),
-    "github": "https://github.com/janedoe_new",
-    "linkedin": "https://linkedin.com/in/janedoe_new",
-    "facebook": "", // Passing empty string removes the link entry
-    "twitter": "https://twitter.com/janedoe",
-    "instagram": "https://instagram.com/janedoe",
-    "website": "https://example.com"
-  }
-  ```
-
----
-
-## 2. Projects Module (`/api/v1/projects`)
-
-### 2.1. Get All Projects
-* **Method:** `GET`
-* **URL:** `http://localhost:3000/api/v1/projects`
-* **Access:** Public
-* **Headers:** 
-  * `Accept: application/json`
-* **Request Body:** None
-
----
-
-### 2.2. Get Single Project
-* **Method:** `GET`
-* **URL:** `http://localhost:3000/api/v1/projects/:id`
-* **Access:** Public
-* **Headers:** 
-  * `Accept: application/json`
-* **Request Body:** None
-
----
-
-### 2.3. Create Project
-* **Method:** `POST`
-* **URL:** `http://localhost:3000/api/v1/projects`
-* **Access:** Private (Admin only)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-  * `Content-Type: multipart/form-data`
-* **Request Body (form-data):**
-  * `title`: "E-Commerce Backend" (String, required, min: 3, max: 100)
-  * `description`: "Robust REST API using Express and Mongoose..." (String, required, min: 10)
-  * `technologies`: "Node.js, Express, MongoDB" (String, required, comma-separated list)
-  * `category`: "Web Development" (String, required, must be one of: `'Web Development'`, `'Mobile App'`, `'Web & Mobile App'`, `'Backend Service & Algorithms'`)
-  * `githubUrl`: "https://github.com/johndoe/ecommerce" (String, optional, URL)
-  * `liveUrl`: "https://ecommerce.example.com" (String, optional, URL)
-  * `featured`: "true" or "on" (Boolean/String, optional)
-  * `images`: (File, optional, array of up to 5 image files)
-
----
-
-### 2.4. Update Project
-* **Method:** `PUT`
-* **URL:** `http://localhost:3000/api/v1/projects/:id`
-* **Access:** Private (Admin only)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-  * `Content-Type: multipart/form-data`
-* **Request Body (form-data / JSON):**
-  * Same fields as **Create Project**. Only pass fields that require updates.
-
----
-
-## 3. Announcements Module (`/api/v1/announcements`)
-
-### 3.1. Get All Active Announcements
-* **Method:** `GET`
-* **URL:** `http://localhost:3000/api/v1/announcements`
-* **Access:** Public
-* **Headers:** 
-  * `Accept: application/json`
-* **Request Body:** None
-
----
-
-### 3.2. Get User-Specific Announcements
-* **Method:** `GET`
-* **URL:** `http://localhost:3000/api/v1/announcements/user`
-* **Access:** Private (Registered user / Admin)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-* **Request Body:** None
-
----
-
-### 3.3. Create Announcement
-* **Method:** `POST`
-* **URL:** `http://localhost:3000/api/v1/announcements`
-* **Access:** Private (Admin only)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-  * `Content-Type: application/json`
-* **Request Body (JSON):**
-  ```json
-  {
-    "announcement": "Maintenance window scheduled for tomorrow.", // String (required)
-    "isActive": true, // Boolean (optional, default: true)
-    "endDate": "2026-06-10T12:00:00.000Z" // Date string (optional, default: 1 week from now)
-  }
-  ```
-
----
-
-### 3.4. Update Announcement
-* **Method:** `PUT`
-* **URL:** `http://localhost:3000/api/v1/announcements/:id`
-* **Access:** Private (Admin only)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-  * `Content-Type: application/json`
-* **Request Body (JSON):**
-  ```json
-  {
-    "announcement": "Updated announcement message", // String (optional)
-    "isActive": false, // Boolean (optional)
-    "endDate": "2026-06-12T12:00:00.000Z" // Date string (optional)
-  }
-  ```
-
----
-
-### 3.5. Delete Announcement
-* **Method:** `DELETE`
-* **URL:** `http://localhost:3000/api/v1/announcements/:id`
-* **Access:** Private (Admin only)
-* **Headers:** 
-  * `Authorization: Bearer <your_jwt_token>`
-  * `Accept: application/json`
-* **Request Body:** None
+1. **Input Sanitation & Strict Validation:** Dual-mode validation middleware parses API payloads as JSON and redirects standard EJS form submissions with descriptive error flash alerts.
+2. **Session Integrity:** Uses HTTP-Only cookies with context-aware `sameSite` and `secure` configurations.
+3. **Graceful Shutdowns:** Listens to termination signals (`SIGINT`, `SIGTERM`) to safely terminate MongoDB connections and active socket channels before exiting the process.

@@ -1,9 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
-const { validate, schemas } = require('../../middleware/validate');
-const { protect } = require('../../middleware/auth');
-
 const Project = require('../../models/Project');
 const Message = require('../../models/Message');
 const User = require('../../models/User');
