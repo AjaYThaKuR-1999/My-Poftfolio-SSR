@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDashboard, ssrUpdateProfile, ssrCreateAnnouncement, ssrUpdateAnnouncement, ssrDeleteAnnouncement, ssrUploadResume, ssrDownloadResume } = require('../../controllers/dashboardController');
+const { getDashboard, ssrUpdateProfile, ssrCreateAnnouncement, ssrUpdateAnnouncement, ssrDeleteAnnouncement, ssrUploadResume, ssrDownloadResume } = require('../../controllers/ssr/dashboardController');
 const { protect, authorize } = require('../../middleware/auth');
 const { validate, schemas } = require('../../middleware/validate');
 const upload = require('../../utils/multer');

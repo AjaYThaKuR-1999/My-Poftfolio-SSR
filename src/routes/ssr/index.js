@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-const { submitConnect } = require('../../controllers/contactController');
 const { validate, schemas } = require('../../middleware/validate');
 const { protect } = require('../../middleware/auth');
 
@@ -54,9 +53,5 @@ router.get('/', async (req, res, next) => {
         next(err);
     }
 });
-
-// @desc    General Connect Submission
-// @route   POST /connect
-router.post('/connect', validate(schemas.contact), submitConnect);
 
 module.exports = router;

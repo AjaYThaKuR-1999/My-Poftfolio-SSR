@@ -1,5 +1,5 @@
 const express = require('express');
-const { apiRegister, apiLogin, apiGetMe, apiLogout, apiGetUsers, apiUpdateMe } = require('../../controllers/api/userController');
+const { apiRegister, apiLogin, apiGetMe, apiLogout, apiGetUsers, apiUpdateMe, recordVisit } = require('../../controllers/api/userController');
 const { protectApi, authorize } = require('../../middleware/auth');
 const { validate, schemas } = require('../../middleware/validate');
 const upload = require('../../utils/multer');
@@ -31,5 +31,8 @@ router.post('/logout', protectApi, apiLogout);
 
 // @route   GET    /api/v1/auth/users
 router.get('/users', protectApi, authorize('admin'), apiGetUsers);
+
+// @route   POST   /api/v1/auth/analytics/visit
+router.post('/analytics/visit', recordVisit);
 
 module.exports = router;

@@ -33,6 +33,11 @@
 
             <div class="flex flex-wrap gap-3.5 shrink-0 relative z-10">
                 <% if (user.role==='admin' ) { %>
+                    <!-- Platform Visits Metric Block -->
+                    <div class="px-5 py-3 bg-gradient-to-r from-primary-950/60 to-slate-900/60 border border-primary-900/30 rounded-xl text-primary-400 text-xs font-bold flex items-center gap-2 shadow-md select-none">
+                        <i class="fas fa-eye text-primary-500 text-xs animate-pulse"></i>
+                        <span>Platform Visits: <strong class="text-white font-extrabold text-[13.5px] ml-1"><%= globalVisits %></strong></span>
+                    </div>
                     <a href="/users"
                         class="px-5 py-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 hover:text-white rounded-xl text-slate-300 transition-all text-xs font-bold flex items-center gap-2 shadow-md">
                         <i class="fas fa-users text-primary-500 text-xs"></i> View Users

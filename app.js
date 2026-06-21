@@ -8,6 +8,7 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const expressLayouts = require('express-ejs-layouts');
 const { checkUser } = require('./src/middleware/auth');
+const { trackUserActivity } = require('./src/middleware/analytics');
 require('dotenv').config();
 
 const app = express();
@@ -48,13 +49,14 @@ app.use(session({
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours
+        maxAge: 1000 * 60 * 60 * 12 // 12 hours
     }
 }));
 app.use(flash());
 
 // Global Variables
 app.use(checkUser);
+app.use(trackUserActivity);
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');

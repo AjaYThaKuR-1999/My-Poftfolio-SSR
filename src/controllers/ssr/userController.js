@@ -3,6 +3,7 @@ const generateToken = require('../../utils/jwt');
 const { sendMail } = require('../../utils/email');
 const { welcomeEmail } = require('../../utils/templates');
 const Announcements = require('../../models/Announcement');
+const PlatformStats = require('../../models/PlatformStats');
 
 // Helper: attach JWT as an httpOnly cookie
 const attachCookie = (res, token) => {
@@ -59,7 +60,9 @@ const ssrRegister = async (req, res, next) => {
             seeking,
             profilePicture,
             socialProfileLinks,
-            role: 'user'
+            role: 'user',
+            visitCount: 1,
+            lastActive: new Date()
         });
         if (user) {
             await createWelcomeAnnouncement(user.name);
@@ -73,6 +76,8 @@ const ssrRegister = async (req, res, next) => {
 
         const token = generateToken(user._id);
         attachCookie(res, token);
+
+        // We will track visits client-side via sessionStorage
 
         req.flash('success_msg', `Welcome, ${user.name}!`);
         res.redirect('/dashboard');
@@ -100,6 +105,14 @@ const ssrLogin = async (req, res, next) => {
         if (!user.isActive) {
             req.flash('error_msg', 'Your account has been deactivated');
             return res.redirect('/auth/login');
+        }
+
+        // Update lastActive time
+        user.lastActive = new Date();
+        if (user.role === 'admin') {
+            await user.save({ validateBeforeSave: false });
+        } else {
+            await user.save();
         }
 
         const token = generateToken(user._id);

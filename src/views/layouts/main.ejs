@@ -17,7 +17,7 @@
     <!-- Font Awesome (Optional) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans selection:bg-primary-500/30 selection:text-primary-200">
+<body class="bg-slate-950 text-slate-100 font-sans selection:bg-primary-500/30 selection:text-primary-200" data-user-logged-in="<%= typeof user !== 'undefined' && user ? 'true' : 'false' %>">
     
     <%- include('../partials/header') %>
 

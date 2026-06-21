@@ -1,8 +1,9 @@
 const path = require('path');
-const Announcement = require('../models/Announcement');
-const Project = require('../models/Project');
-const User = require('../models/User');
-const Message = require('../models/Message');
+const Announcement = require('../../models/Announcement');
+const Project = require('../../models/Project');
+const User = require('../../models/User');
+const Message = require('../../models/Message');
+const PlatformStats = require('../../models/PlatformStats');
 
 // @desc    User Dashboard
 // @route   GET /dashboard
@@ -74,6 +75,13 @@ exports.getDashboard = async (req, res, next) => {
             }).sort({ createdAt: 1 });
         }
 
+        // Fetch global platform visits if user is admin
+        let globalVisits = 0;
+        if (req.user.role === 'admin') {
+            const stats = await PlatformStats.findOne({ key: 'global' });
+            globalVisits = stats ? stats.totalVisits : 0;
+        }
+
         res.render('dashboard/index', {
             title: 'Dashboard',
             announcements,
@@ -81,7 +89,8 @@ exports.getDashboard = async (req, res, next) => {
             adminResume,
             adminProfilePicture: adminUser ? adminUser.profilePicture : null,
             selectedType,
-            messages
+            messages,
+            globalVisits
         });
     } catch (err) {
         next(err);

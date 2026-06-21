@@ -79,13 +79,6 @@ const schemas = {
         password: Joi.string().required(),
     }),
 
-    contact: Joi.object({
-        name: Joi.string().required(),
-        email: Joi.string().email().required(),
-        subject: Joi.string().required(),
-        message: Joi.string().required().min(10),
-    }),
-
     project: Joi.object({
         title: Joi.string().required().min(3).max(100),
         description: Joi.string().required().min(10),

@@ -43,3 +43,34 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.glass-card').forEach(card => {
     // observer.observe(card);
 });
+
+// Visit & Session Tracking
+(function() {
+    const userLoggedIn = document.body.getAttribute('data-user-logged-in') === 'true';
+    window.userLoggedIn = userLoggedIn;
+
+    const trackGlobal = !sessionStorage.getItem('counted_global_visit');
+    const trackUser = userLoggedIn && !sessionStorage.getItem('counted_user_visit');
+
+    if (!userLoggedIn) {
+        sessionStorage.removeItem('counted_user_visit');
+    }
+
+    if (trackGlobal || trackUser) {
+        fetch('/api/v1/auth/analytics/visit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ trackGlobal, trackUser })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (trackGlobal) sessionStorage.setItem('counted_global_visit', 'true');
+                if (trackUser) sessionStorage.setItem('counted_user_visit', 'true');
+            }
+        })
+        .catch(err => console.error('[Tracking Error]:', err));
+    }
+})();

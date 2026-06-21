@@ -3,6 +3,7 @@ const generateToken = require('../../utils/jwt');
 const { sendMail } = require('../../utils/email');
 const { welcomeEmail } = require('../../utils/templates');
 const Announcements = require('../../models/Announcement');
+const PlatformStats = require('../../models/PlatformStats');
 
 // Register user — API
 const apiRegister = async (req, res, next) => {
@@ -47,7 +48,9 @@ const apiRegister = async (req, res, next) => {
             seeking,
             profilePicture,
             socialProfileLinks,
-            role: 'user'
+            role: 'user',
+            visitCount: 1,
+            lastActive: new Date()
         });
         if (user) {
             await createWelcomeAnnouncement(user.name);
@@ -92,6 +95,15 @@ const apiLogin = async (req, res, next) => {
 
         if (!user.isActive) {
             return res.status(403).json({ success: false, message: 'Account deactivated' });
+        }
+
+        // Update lastActive time
+        user.lastActive = new Date();
+
+        if (user.role === 'admin') {
+            await user.save({ validateBeforeSave: false });
+        } else {
+            await user.save();
         }
 
         const token = generateToken(user._id);
@@ -301,11 +313,35 @@ const apiUpdateMe = async (req, res, next) => {
     }
 };
 
+// Record visit (Global or User) — API
+const recordVisit = async (req, res, next) => {
+    try {
+        const { trackGlobal, trackUser } = req.body;
+
+        if (trackGlobal) {
+            await PlatformStats.findOneAndUpdate(
+                { key: 'global' },
+                { $inc: { totalVisits: 1 } },
+                { upsert: true }
+            );
+        }
+
+        if (trackUser && req.user) {
+            await User.findByIdAndUpdate(req.user.id, { $inc: { visitCount: 1 } });
+        }
+
+        res.status(200).json({ success: true });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     apiRegister,
     apiLogin,
     apiGetMe,
     apiLogout,
     apiGetUsers,
-    apiUpdateMe
+    apiUpdateMe,
+    recordVisit
 };
