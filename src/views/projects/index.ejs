@@ -1,345 +1,478 @@
-<%
-    const totalCount        = projects.length;
-    const professionalCount = projects.filter(p => p.projectType === 'professional').length;
-    const personalCount     = projects.filter(p => p.projectType !== 'professional').length;
-    const featuredCount     = projects.filter(p => p.featured).length;
-%>
+<% const totalCount=projects.length; const professionalCount=projects.filter(p=> p.projectType ===
+    'professional').length;
+    const personalCount = projects.filter(p => p.projectType !== 'professional').length;
+    const featuredCount = projects.filter(p => p.featured).length;
+    %>
 
-<!-- AMBIENT BLOBS -->
-<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-    <div class="absolute top-[-80px] right-[-80px] w-[540px] h-[540px] bg-primary-600/5 rounded-full blur-[140px]"></div>
-    <div class="absolute bottom-[10%] left-[-60px] w-[360px] h-[360px] bg-blue-600/4 rounded-full blur-[110px]"></div>
-    <div class="absolute top-[50%] right-[20%] w-[240px] h-[240px] bg-primary-400/3 rounded-full blur-[90px]"></div>
-</div>
-
-<section class="pt-32 pb-24 relative z-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        <!-- ══ HEADER ROW ══ -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-14"
-             style="animation: fade-in 0.6s ease-out both;">
-
-            <!-- Left -->
-            <div class="min-w-0">
-                <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-950/70 border border-primary-800/50 rounded-full text-primary-400 text-[10px] font-bold uppercase tracking-widest mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse"></span>
-                    Portfolio Showcase
-                </div>
-                <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.07] mb-2">
-                    My <span class="text-primary-400">Projects</span>
-                </h1>
-                <p class="text-slate-500 text-sm leading-relaxed max-w-lg">
-                    Backend architectures, scalable APIs, and distributed systems — built for performance and scale.
-                </p>
-            </div>
-
-            <!-- Right: filters + add -->
-            <div class="flex flex-wrap items-center gap-3 shrink-0">
-                <% if (totalCount > 0) { %>
-                    <div class="flex items-center gap-1 p-1 bg-slate-900/80 border border-slate-800 rounded-xl" id="filter-tabs">
-                        <button type="button" class="filter-btn active-filter" data-filter="all">All <span class="count-badge"><%= totalCount %></span></button>
-                        <button type="button" class="filter-btn" data-filter="professional">Work <span class="count-badge"><%= professionalCount %></span></button>
-                        <button type="button" class="filter-btn" data-filter="personal">Personal <span class="count-badge"><%= personalCount %></span></button>
-                        <% if (featuredCount > 0 && typeof user !== 'undefined' && user && user.role === 'admin') { %>
-                        <button type="button" class="filter-btn" data-filter="featured"><i class="fas fa-star text-[8px]"></i> Featured</button>
-                        <% } %>
-                    </div>
-                <% } %>
-                <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-                    <a href="/projects/new"
-                       class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-primary-900/40 hover:shadow-primary-500/25 transition-all duration-200 hover:scale-[1.03] active:scale-95 whitespace-nowrap">
-                        <i class="fas fa-plus text-[10px]"></i> New
-                    </a>
-                <% } %>
-            </div>
+    <!-- AMBIENT BLOBS -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="absolute top-[-80px] right-[-80px] w-[540px] h-[540px] bg-primary-600/5 rounded-full blur-[140px]">
         </div>
+        <div class="absolute bottom-[10%] left-[-60px] w-[360px] h-[360px] bg-blue-600/4 rounded-full blur-[110px]">
+        </div>
+        <div class="absolute top-[50%] right-[20%] w-[240px] h-[240px] bg-primary-400/3 rounded-full blur-[90px]"></div>
+    </div>
 
-        <!-- ══ PROJECT GRID ══ -->
-        <% if (projects.length > 0) { %>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
-                <% projects.forEach((project, i) => {
-                    const hasLogo    = project.logoUrl && project.logoUrl !== '';
-                    const hasImg     = project.image && !project.image.endsWith('no-photo.jpg');
-                    const filterType = project.projectType === 'professional' ? 'professional' : 'personal';
-                %>
-                    <div class="project-card group relative flex flex-col overflow-hidden rounded-2xl border border-slate-800/60 bg-gradient-to-b from-slate-900/80 to-slate-950/90 backdrop-blur-sm cursor-pointer"
-                         data-type="<%= filterType %>"
-                         data-featured="<%= project.featured ? 'true' : 'false' %>"
-                         onclick="window.location='/projects/<%= project._id %>'"
-                         style="--delay: <%= (i * 0.07).toFixed(2) %>s;">
+    <section class="pt-32 pb-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                        <!-- ══ CARD VISUAL AREA ══ -->
-                        <div class="relative overflow-hidden card-visual" style="height: 210px;">
+            <!-- ══ HEADER ROW ══ -->
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-14"
+                style="animation: fade-in 0.6s ease-out both;">
 
-                            <% if (hasLogo) { %>
-                                <!-- LOGO MODE: full-area background + logo filling the frame via border-box padding -->
-                                <div class="absolute inset-0"
-                                     style="background: linear-gradient(145deg, #08172e 0%, #0d2540 40%, #061322 100%);"></div>
+                <!-- Left -->
+                <div class="min-w-0">
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 bg-primary-950/70 border border-primary-800/50 rounded-full text-primary-400 text-[10px] font-bold uppercase tracking-widest mb-4">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse"></span>
+                        Portfolio Showcase
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.07] mb-2">
+                        My <span class="text-primary-400">Projects</span>
+                    </h1>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-lg">
+                        Backend architectures, scalable APIs, and distributed systems — built for performance and scale.
+                    </p>
+                </div>
 
-                                <!-- Dot-grid texture -->
-                                <div class="absolute inset-0 opacity-[0.12]"
-                                     style="background-image: radial-gradient(circle, rgba(14,165,233,0.8) 1px, transparent 1px); background-size: 22px 22px;"></div>
+                <!-- Right: filters + add -->
+                <div class="flex flex-wrap items-center gap-3 shrink-0">
+                    <% if (totalCount> 0) { %>
+                        <div class="flex items-center gap-1 p-1 bg-slate-900/80 border border-slate-800 rounded-xl"
+                            id="filter-tabs">
+                            <button type="button" class="filter-btn active-filter" data-filter="all">All <span
+                                    class="count-badge">
+                                    <%= totalCount %>
+                                </span></button>
+                            <button type="button" class="filter-btn" data-filter="professional">Work <span
+                                    class="count-badge">
+                                    <%= professionalCount %>
+                                </span></button>
+                            <button type="button" class="filter-btn" data-filter="personal">Personal <span
+                                    class="count-badge">
+                                    <%= personalCount %>
+                                </span></button>
+                            <% if (featuredCount> 0 && typeof user !== 'undefined' && user && user.role === 'admin') {
+                                %>
+                                <button type="button" class="filter-btn" data-filter="featured"><i
+                                        class="fas fa-star text-[8px]"></i> Featured</button>
+                                <% } %>
+                        </div>
+                        <% } %>
+                            <% if (typeof user !=='undefined' && user && user.role==='admin' ) { %>
+                                <a href="/projects/new"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-primary-900/40 hover:shadow-primary-500/25 transition-all duration-200 hover:scale-[1.03] active:scale-95 whitespace-nowrap">
+                                    <i class="fas fa-plus text-[10px]"></i> New
+                                </a>
+                                <% } %>
+                </div>
+            </div>
 
-                                <!-- Radial glow behind logo -->
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div class="w-52 h-52 rounded-full opacity-25 blur-3xl"
-                                         style="background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 70%);"></div>
-                                </div>
+            <!-- ══ PROJECT GRID ══ -->
+            <% if (projects.length> 0) { %>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
+                    <% projects.forEach((project, i)=> {
+                        const hasLogo = project.logoUrl && project.logoUrl !== '';
+                        const hasImg = project.image && !project.image.endsWith('no-photo.jpg');
+                        const filterType = project.projectType === 'professional' ? 'professional' : 'personal';
+                        %>
+                        <div class="project-card group relative flex flex-col overflow-hidden rounded-2xl border border-slate-800/60 bg-gradient-to-b from-slate-900/80 to-slate-950/90 backdrop-blur-sm cursor-pointer"
+                            data-type="<%= filterType %>" data-featured="<%= project.featured ? 'true' : 'false' %>"
+                            onclick="window.location='/projects/<%= project._id %>'"
+                            style="--delay: <%= (i * 0.07).toFixed(2) %>s;">
 
-                                <!--
+                            <!-- ══ CARD VISUAL AREA ══ -->
+                            <div class="relative overflow-hidden card-visual" style="height: 210px;">
+
+                                <% if (hasLogo) { %>
+                                    <!-- LOGO MODE: full-area background + logo filling the frame via border-box padding -->
+                                    <div class="absolute inset-0"
+                                        style="background: linear-gradient(145deg, #08172e 0%, #0d2540 40%, #061322 100%);">
+                                    </div>
+
+                                    <!-- Dot-grid texture -->
+                                    <div class="absolute inset-0 opacity-[0.12]"
+                                        style="background-image: radial-gradient(circle, rgba(14,165,233,0.8) 1px, transparent 1px); background-size: 22px 22px;">
+                                    </div>
+
+                                    <!-- Radial glow behind logo -->
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div class="w-52 h-52 rounded-full opacity-25 blur-3xl"
+                                            style="background: radial-gradient(circle, rgba(14,165,233,1) 0%, transparent 70%);">
+                                        </div>
+                                    </div>
+
+                                    <!--
                                   Logo: sits directly in the absolute container.
                                   width/height 100% fills the container, padding creates breathing room,
                                   box-sizing:border-box keeps padding inside the 100% bounds,
                                   object-fit:contain ensures the full logo is always visible.
                                 -->
-                                <img src="<%= project.logoUrl %>" alt="<%= project.title %> logo"
-                                     class="absolute inset-0 logo-img"
-                                     style="width:100%; height:100%; object-fit:contain; padding:28px; box-sizing:border-box; filter: drop-shadow(0 6px 24px rgba(14,165,233,0.3)) drop-shadow(0 2px 10px rgba(0,0,0,0.5));">
+                                    <img src="<%= project.logoUrl %>" alt="<%= project.title %> logo"
+                                        class="absolute inset-0 logo-img"
+                                        style="width:100%; height:100%; object-fit:contain; padding:28px; box-sizing:border-box; filter: drop-shadow(0 6px 24px rgba(14,165,233,0.3)) drop-shadow(0 2px 10px rgba(0,0,0,0.5));">
 
-                                <!-- Bottom gradient fade -->
-                                <div class="absolute bottom-0 left-0 right-0 h-10"
-                                     style="background: linear-gradient(to top, rgba(6,13,22,0.7), transparent);"></div>
-
-                            <% } else if (hasImg) { %>
-                                <!-- GALLERY IMAGE MODE -->
-                                <img src="<%= project.image %>" alt="<%= project.title %>"
-                                     class="absolute inset-0 w-full h-full object-cover"
-                                     style="transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent"></div>
-
-                            <% } else { %>
-                                <!-- PLACEHOLDER MODE -->
-                                <div class="absolute inset-0"
-                                     style="background: linear-gradient(145deg, #08172e 0%, #0d2540 40%, #061322 100%);"></div>
-                                <div class="absolute inset-0 opacity-[0.08]"
-                                     style="background-image: radial-gradient(circle, rgba(14,165,233,0.8) 1px, transparent 1px); background-size: 22px 22px;"></div>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                                    <div class="w-14 h-14 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center">
-                                        <i class="fas fa-layer-group text-2xl text-slate-600"></i>
+                                    <!-- Bottom gradient fade -->
+                                    <div class="absolute bottom-0 left-0 right-0 h-10"
+                                        style="background: linear-gradient(to top, rgba(6,13,22,0.7), transparent);">
                                     </div>
-                                    <span class="text-slate-600 text-[10px] font-bold uppercase tracking-widest">No Preview</span>
+
+                                    <% } else if (hasImg) { %>
+                                        <!-- GALLERY IMAGE MODE -->
+                                        <img src="<%= project.image %>" alt="<%= project.title %>"
+                                            class="absolute inset-0 w-full h-full object-cover"
+                                            style="transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
+                                        <div
+                                            class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent">
+                                        </div>
+
+                                        <% } else { %>
+                                            <!-- PLACEHOLDER MODE -->
+                                            <div class="absolute inset-0"
+                                                style="background: linear-gradient(145deg, #08172e 0%, #0d2540 40%, #061322 100%);">
+                                            </div>
+                                            <div class="absolute inset-0 opacity-[0.08]"
+                                                style="background-image: radial-gradient(circle, rgba(14,165,233,0.8) 1px, transparent 1px); background-size: 22px 22px;">
+                                            </div>
+                                            <div
+                                                class="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                                                <div
+                                                    class="w-14 h-14 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center">
+                                                    <i class="fas fa-layer-group text-2xl text-slate-600"></i>
+                                                </div>
+                                                <span
+                                                    class="text-slate-600 text-[10px] font-bold uppercase tracking-widest">No
+                                                    Preview</span>
+                                            </div>
+                                            <% } %>
+                            </div><!-- /card-visual -->
+
+                            <!-- ══ CARD BODY ══ -->
+                            <div class="flex flex-col flex-grow p-5">
+
+                                <!-- Title -->
+                                <h3 class="text-[15px] font-extrabold text-white leading-snug mb-2.5 line-clamp-2"
+                                    style="transition: color 0.2s ease;">
+                                    <%= project.title %>
+                                </h3>
+
+                                <!-- Category + Type + Featured badges — all on one row -->
+                                <div class="flex flex-wrap items-center gap-1.5 mb-3">
+                                    <!-- Category -->
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-950/70 border border-primary-800/50 text-primary-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
+                                        <%= project.category %>
+                                    </span>
+                                    <!-- Type -->
+                                    <% if (project.projectType==='professional' ) { %>
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-950/70 border border-emerald-800/50 text-emerald-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
+                                            <i class="fas fa-briefcase text-[7px]"></i> Work
+                                        </span>
+                                        <% } else { %>
+                                            <span
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-950/70 border border-blue-800/50 text-blue-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
+                                                <i class="fas fa-code text-[7px]"></i> Personal
+                                            </span>
+                                            <% } %>
+                                                <!-- Featured -->
+                                                <% if (project.featured) { %>
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-950/70 border border-yellow-800/50 text-yellow-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
+                                                        <i class="fas fa-star text-[7px]"></i> Featured
+                                                    </span>
+                                                    <% } %>
                                 </div>
-                            <% } %>
-                        </div><!-- /card-visual -->
 
-                        <!-- ══ CARD BODY ══ -->
-                        <div class="flex flex-col flex-grow p-5">
+                                <!-- Description -->
+                                <p class="text-slate-500 text-[12.5px] leading-relaxed line-clamp-3 flex-grow mb-4">
+                                    <%= project.description %>
+                                </p>
 
-                            <!-- Title -->
-                            <h3 class="text-[15px] font-extrabold text-white leading-snug mb-2.5 line-clamp-2"
-                                style="transition: color 0.2s ease;">
-                                <%= project.title %>
-                            </h3>
+                                <!-- FOOTER -->
+                                <div class="border-t border-slate-800/50 pt-3">
+                                    <!-- Tech chips container: max 2 rows, dynamic overflow hiding -->
+                                    <div class="tech-container flex flex-wrap gap-1 w-full overflow-hidden relative mb-0.5"
+                                        style="max-height: 45px;">
+                                        <% project.technologies.forEach((tech)=> { %>
+                                            <span
+                                                class="tech-tag px-1.5 py-0.5 bg-slate-800/60 border border-slate-700/40 rounded text-[9px] font-semibold text-slate-400 uppercase tracking-wide whitespace-nowrap">
+                                                <%= tech %>
+                                            </span>
+                                            <% }); %>
+                                                <span
+                                                    class="tech-more-badge hidden px-1.5 py-0.5 bg-primary-950/60 border border-primary-900/50 rounded text-[9px] font-bold text-primary-500 whitespace-nowrap select-none">
+                                                    +0
+                                                </span>
+                                    </div>
+                                </div>
 
-                            <!-- Category + Type + Featured badges — all on one row -->
-                            <div class="flex flex-wrap items-center gap-1.5 mb-3">
-                                <!-- Category -->
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-950/70 border border-primary-800/50 text-primary-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
-                                    <%= project.category %>
-                                </span>
-                                <!-- Type -->
-                                <% if (project.projectType === 'professional') { %>
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-950/70 border border-emerald-800/50 text-emerald-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
-                                        <i class="fas fa-briefcase text-[7px]"></i> Work
-                                    </span>
-                                <% } else { %>
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-950/70 border border-blue-800/50 text-blue-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
-                                        <i class="fas fa-code text-[7px]"></i> Personal
-                                    </span>
-                                <% } %>
-                                <!-- Featured -->
-                                <% if (project.featured) { %>
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-950/70 border border-yellow-800/50 text-yellow-400 rounded-md text-[9px] font-bold uppercase tracking-wider">
-                                        <i class="fas fa-star text-[7px]"></i> Featured
-                                    </span>
-                                <% } %>
                             </div>
 
-                            <!-- Description -->
-                            <p class="text-slate-500 text-[12.5px] leading-relaxed line-clamp-3 flex-grow mb-4">
-                                <%= project.description %>
-                            </p>
+                        </div><!-- /project-card -->
+                        <% }); %>
+                </div>
 
-                            <!-- FOOTER -->
-                            <div class="border-t border-slate-800/50 pt-3">
-                                <!-- Row 1: Tech chips — wrap freely across 2 lines -->
-                                <div class="flex flex-wrap gap-1 mb-2.5">
-                                    <% project.technologies.slice(0, 6).forEach(tech => { %>
-                                        <span class="px-1.5 py-0.5 bg-slate-800/60 border border-slate-700/40 rounded text-[9px] font-semibold text-slate-400 uppercase tracking-wide whitespace-nowrap">
-                                            <%= tech %>
-                                        </span>
-                                    <% }); %>
-                                    <% if (project.technologies.length > 6) { %>
-                                        <span class="px-1.5 py-0.5 bg-primary-950/60 border border-primary-900/50 rounded text-[9px] font-bold text-primary-500 whitespace-nowrap">
-                                            +<%= project.technologies.length - 6 %>
-                                        </span>
-                                    <% } %>
-                                </div>
+                <!-- Zero-result state -->
+                <div id="no-filter-results" class="hidden text-center py-20">
+                    <i class="fas fa-filter text-4xl text-slate-700 mb-4 block"></i>
+                    <h3 class="text-base font-bold text-white mb-2">No projects match this filter</h3>
+                    <p class="text-slate-500 text-sm mb-5">Try a different category.</p>
+                    <button onclick="document.querySelector('[data-filter=all]').click()"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer">
+                        <i class="fas fa-times text-[9px]"></i> Show All
+                    </button>
+                </div>
 
-                            </div>
+                <% } else { %>
+                    <!-- EMPTY STATE -->
+                    <div class="flex flex-col items-center justify-center py-28 glass-card border-slate-800/50 text-center"
+                        style="animation: fade-in 0.6s ease-out both;">
+                        <div
+                            class="w-20 h-20 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center mb-6 shadow-xl">
+                            <i class="fas fa-layer-group text-3xl text-slate-600"></i>
                         </div>
-
-                    </div><!-- /project-card -->
-                <% }); %>
-            </div>
-
-            <!-- Zero-result state -->
-            <div id="no-filter-results" class="hidden text-center py-20">
-                <i class="fas fa-filter text-4xl text-slate-700 mb-4 block"></i>
-                <h3 class="text-base font-bold text-white mb-2">No projects match this filter</h3>
-                <p class="text-slate-500 text-sm mb-5">Try a different category.</p>
-                <button onclick="document.querySelector('[data-filter=all]').click()"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer">
-                    <i class="fas fa-times text-[9px]"></i> Show All
-                </button>
-            </div>
-
-        <% } else { %>
-            <!-- EMPTY STATE -->
-            <div class="flex flex-col items-center justify-center py-28 glass-card border-slate-800/50 text-center"
-                 style="animation: fade-in 0.6s ease-out both;">
-                <div class="w-20 h-20 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center mb-6 shadow-xl">
-                    <i class="fas fa-layer-group text-3xl text-slate-600"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-white mb-2">No Projects Yet</h3>
-                <p class="text-slate-500 text-sm max-w-sm mb-8 leading-relaxed">Projects will appear here once they're added.</p>
-                <div class="flex items-center gap-3">
-                    <a href="/" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-xl font-bold text-sm transition-all">
-                        <i class="fas fa-home text-[10px]"></i> Home
-                    </a>
-                    <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-                    <a href="/projects/new" class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold text-sm shadow-lg transition-all">
-                        <i class="fas fa-plus text-[10px]"></i> Add First
-                    </a>
+                        <h3 class="text-xl font-extrabold text-white mb-2">No Projects Yet</h3>
+                        <p class="text-slate-500 text-sm max-w-sm mb-8 leading-relaxed">Projects will appear here once
+                            they're added.</p>
+                        <div class="flex items-center gap-3">
+                            <a href="/"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-xl font-bold text-sm transition-all">
+                                <i class="fas fa-home text-[10px]"></i> Home
+                            </a>
+                            <% if (typeof user !=='undefined' && user && user.role==='admin' ) { %>
+                                <a href="/projects/new"
+                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold text-sm shadow-lg transition-all">
+                                    <i class="fas fa-plus text-[10px]"></i> Add First
+                                </a>
+                                <% } %>
+                        </div>
+                    </div>
                     <% } %>
-                </div>
-            </div>
-        <% } %>
 
-    </div>
-</section>
+        </div>
+    </section>
 
-<!-- ══ STYLES ══ -->
-<style>
-/* ── Filter bar ── */
-.filter-btn {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 5px 11px; border-radius: 8px;
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em;
-    color: #64748b; background: transparent; border: none;
-    cursor: pointer; white-space: nowrap;
-    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-}
-.filter-btn:hover { color: #cbd5e1; background: rgba(51,65,85,0.35); }
-.filter-btn.active-filter {
-    background: rgba(14,165,233,0.14);
-    color: #38bdf8;
-    box-shadow: 0 0 0 1px rgba(14,165,233,0.28);
-}
-.count-badge {
-    display: inline-block; padding: 1px 5px;
-    background: rgba(51,65,85,0.6); border-radius: 4px;
-    font-size: 9px; font-weight: 900; color: #94a3b8; line-height: 1.4;
-}
-.filter-btn.active-filter .count-badge { background: rgba(14,165,233,0.22); color: #7dd3fc; }
+    <!-- ══ STYLES ══ -->
+    <style>
+        /* ── Filter bar ── */
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
 
-/* ── Card interactions ── */
-.project-card {
-    will-change: transform, box-shadow;
-    animation: fade-in 0.55s var(--delay, 0s) ease-out both;
-    transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
-}
-.project-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(14,165,233,0.35) !important;
-    box-shadow:
-        0 0 0 1px rgba(14,165,233,0.12),
-        0 20px 48px -12px rgba(0,0,0,0.7),
-        0 0 40px -20px rgba(14,165,233,0.2);
-}
-/* Logo: scale + glow intensify on card hover */
-.project-card:hover .card-visual .logo-img {
-    filter: drop-shadow(0 8px 36px rgba(14,165,233,0.55)) drop-shadow(0 2px 10px rgba(0,0,0,0.6)) !important;
-    transform: scale(1.04);
-    transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), filter 0.35s ease !important;
-}
-/* Gallery image zoom on hover */
-.project-card:hover .card-visual img:not(.logo-img) {
-    transform: scale(1.05);
-    transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
-}
+        .filter-btn:hover {
+            color: #cbd5e1;
+            background: rgba(51, 65, 85, 0.35);
+        }
 
-/* Title colour shift on hover */
-.project-card:hover h3 { color: #38bdf8; }
+        .filter-btn.active-filter {
+            background: rgba(14, 165, 233, 0.14);
+            color: #38bdf8;
+            box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.28);
+        }
 
-/* ── Icon buttons in footer ── */
-.card-icon-btn {
-    width: 28px; height: 28px; border-radius: 8px;
-    background: rgba(30,41,59,0.8);
-    border: 1px solid rgba(51,65,85,0.6);
-    display: inline-flex; align-items: center; justify-content: center;
-    color: #64748b;
-    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
-}
-.card-icon-btn:hover {
-    background: rgba(51,65,85,0.9);
-    color: #e2e8f0;
-    border-color: rgba(100,116,139,0.6);
-    transform: scale(1.1);
-}
-.card-icon-btn--primary:hover {
-    background: rgba(14,165,233,0.85) !important;
-    color: #fff !important;
-    border-color: rgba(14,165,233,0.6) !important;
-}
+        .count-badge {
+            display: inline-block;
+            padding: 1px 5px;
+            background: rgba(51, 65, 85, 0.6);
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 900;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
 
-/* ── Filter hide ── */
-.project-card.hidden-by-filter { display: none; }
+        .filter-btn.active-filter .count-badge {
+            background: rgba(14, 165, 233, 0.22);
+            color: #7dd3fc;
+        }
 
-/* ── Clamp ── */
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-</style>
+        /* ── Card interactions ── */
+        .project-card {
+            will-change: transform, box-shadow;
+            animation: fade-in 0.55s var(--delay, 0s) ease-out both;
+            transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+        }
 
-<!-- ══ FILTER SCRIPT ══ -->
-<script>
-(function () {
-    const tabs  = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.project-card');
-    const noRes = document.getElementById('no-filter-results');
-    if (!tabs.length) return;
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(14, 165, 233, 0.35) !important;
+            box-shadow:
+                0 0 0 1px rgba(14, 165, 233, 0.12),
+                0 20px 48px -12px rgba(0, 0, 0, 0.7),
+                0 0 40px -20px rgba(14, 165, 233, 0.2);
+        }
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const f = tab.dataset.filter;
-            tabs.forEach(t => t.classList.remove('active-filter'));
-            tab.classList.add('active-filter');
+        /* Logo: scale + glow intensify on card hover */
+        .project-card:hover .card-visual .logo-img {
+            filter: drop-shadow(0 8px 36px rgba(14, 165, 233, 0.55)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.6)) !important;
+            transform: scale(1.04);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease !important;
+        }
 
-            let visible = 0;
-            cards.forEach(card => {
-                const show = f === 'all'          ? true
-                           : f === 'professional' ? card.dataset.type === 'professional'
-                           : f === 'personal'     ? card.dataset.type === 'personal'
-                           : f === 'featured'     ? card.dataset.featured === 'true'
-                           : false;
-                card.classList.toggle('hidden-by-filter', !show);
-                if (show) visible++;
+        /* Gallery image zoom on hover */
+        .project-card:hover .card-visual img:not(.logo-img) {
+            transform: scale(1.05);
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Title colour shift on hover */
+        .project-card:hover h3 {
+            color: #38bdf8;
+        }
+
+        /* ── Icon buttons in footer ── */
+        .card-icon-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+        }
+
+        .card-icon-btn:hover {
+            background: rgba(51, 65, 85, 0.9);
+            color: #e2e8f0;
+            border-color: rgba(100, 116, 139, 0.6);
+            transform: scale(1.1);
+        }
+
+        .card-icon-btn--primary:hover {
+            background: rgba(14, 165, 233, 0.85) !important;
+            color: #fff !important;
+            border-color: rgba(14, 165, 233, 0.6) !important;
+        }
+
+        /* ── Filter hide ── */
+        .project-card.hidden-by-filter {
+            display: none;
+        }
+
+        /* ── Clamp ── */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+
+    <!-- ══ FILTER SCRIPT ══ -->
+    <script>
+        (function () {
+            const tabs = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.project-card');
+            const noRes = document.getElementById('no-filter-results');
+            if (!tabs.length) return;
+
+            function adjustTags() {
+                document.querySelectorAll('.tech-container').forEach(container => {
+                    const tags = container.querySelectorAll('.tech-tag');
+                    const badge = container.querySelector('.tech-more-badge');
+                    if (!tags.length || !badge) return;
+
+                    // Reset visibility to measure natural layout positions
+                    tags.forEach(t => t.classList.remove('hidden'));
+                    badge.classList.add('hidden');
+
+                    // Determine the rows based on offsetTop
+                    let rowTops = [];
+                    tags.forEach(tag => {
+                        const top = tag.offsetTop;
+                        if (!rowTops.some(r => Math.abs(r - top) < 5)) {
+                            rowTops.push(top);
+                        }
+                    });
+
+                    let hiddenCount = 0;
+
+                    // First pass: Hide tags that are not in the first 2 rows
+                    tags.forEach(tag => {
+                        const top = tag.offsetTop;
+                        const isOnFirstTwoRows = rowTops.slice(0, 2).some(r => Math.abs(r - top) < 5);
+                        if (!isOnFirstTwoRows) {
+                            tag.classList.add('hidden');
+                            hiddenCount++;
+                        }
+                    });
+
+                    // Second pass: If any tags were hidden, show badge and ensure it stays within 2 rows
+                    if (hiddenCount > 0) {
+                        badge.textContent = `+${hiddenCount}`;
+                        badge.classList.remove('hidden');
+
+                        // Dynamically determine the maximum allowed offsetTop (2nd row top, or 1st row if 2nd doesn't exist)
+                        const maxAllowedTop = (rowTops.length > 1 ? rowTops[1] : rowTops[0]) + 5;
+
+                        // Keep hiding the trailing visible tags one by one until the badge shifts within the 2-row height
+                        for (let i = tags.length - 1; i >= 0; i--) {
+                            if (badge.offsetTop <= maxAllowedTop) {
+                                break;
+                            }
+                            const tag = tags[i];
+                            if (!tag.classList.contains('hidden')) {
+                                tag.classList.add('hidden');
+                                hiddenCount++;
+                                badge.textContent = `+${hiddenCount}`;
+                            }
+                        }
+                    }
+                });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const f = tab.dataset.filter;
+                    tabs.forEach(t => t.classList.remove('active-filter'));
+                    tab.classList.add('active-filter');
+
+                    let visible = 0;
+                    cards.forEach(card => {
+                        const show = f === 'all' ? true
+                            : f === 'professional' ? card.dataset.type === 'professional'
+                                : f === 'personal' ? card.dataset.type === 'personal'
+                                    : f === 'featured' ? card.dataset.featured === 'true'
+                                        : false;
+                        card.classList.toggle('hidden-by-filter', !show);
+                        if (show) visible++;
+                    });
+                    if (noRes) noRes.classList.toggle('hidden', visible > 0);
+
+                    // Recalculate tags visibility after filtering active cards
+                    adjustTags();
+                });
             });
-            if (noRes) noRes.classList.toggle('hidden', visible > 0);
-        });
-    });
-})();
-</script>
+
+            // Run on page load and window resize to handle responsiveness
+            window.addEventListener('load', adjustTags);
+            window.addEventListener('resize', adjustTags);
+        })();
+    </script>
